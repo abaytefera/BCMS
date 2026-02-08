@@ -102,7 +102,7 @@ const ReportFilters = ({ filters, setFilters, departments }) => {
           <button 
             type="button"
             onClick={handleReset}
-            className="w-full py-3.5 bg-green-600 text-white font-black text-[10px] tracking-widest rounded-xl hover:bg-green-800 transition-all active:scale-[0.98] shadow-md shadow-slate-200"
+            className="w-full py-3.5 bg-textColor text-white font-black text-[10px] tracking-widest rounded-xl  transition-all active:scale-[0.98] shadow-md shadow-slate-200"
           >
             CLEAR FILTERS
           </button>

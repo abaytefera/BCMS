@@ -67,7 +67,7 @@ const SystemSettings = () => {
             {/* Header Section */}
             <div className="mb-12">
               <h1 className="text-4xl font-black text-slate-900 tracking-tighter  leading-none">
-                System <span className="text-emerald-600">Settings</span>
+                System <span className="text-textColor">Settings</span>
               </h1>
               <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-[10px] mt-3 ml-1">
                 Platform Configuration & Global Rules
@@ -157,7 +157,7 @@ const SystemSettings = () => {
               <button 
                 onClick={handleGlobalSave}
                 disabled={isSaving}
-                className="w-full max-w-md py-5 bg-emerald-600 rounded-[2rem] text-white font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-xl shadow-emerald-200 hover:bg-emerald-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                className="w-full max-w-md py-5 bg-textColor rounded-[2rem] text-white font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-xl shadow-emerald-200  hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
               >
                 {isSaving ? <Loader2 className="animate-spin" /> : <Save size={20} />}
                 {isSaving ? "Synchronizing..." : "Save All Changes"}

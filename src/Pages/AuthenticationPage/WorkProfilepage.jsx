@@ -104,7 +104,7 @@ const WorkProfile = () => {
             <div className="bg-white border border-slate-200 rounded-[3rem] shadow-sm overflow-hidden relative">
               
               {/* Header Banner */}
-              <div className="h-44 bg-gradient-to-r from-emerald-600 to-emerald-400 relative">
+              <div className="h-44 bg-textColor relative">
                 <div className="absolute -bottom-16 left-12 group cursor-pointer" onClick={() => fileInputRef.current.click()}>
                   <div className="p-1.5 bg-white rounded-[2.2rem] shadow-xl border border-slate-100">
                     <div className="w-32 h-32 bg-slate-50 rounded-[2rem] flex items-center justify-center overflow-hidden relative">
@@ -125,8 +125,8 @@ const WorkProfile = () => {
               <div className="pt-24 pb-12 px-8 md:px-12">
                 <div className="flex justify-between items-start mb-10">
                   <div>
-                    <h1 className="text-4xl font-black text-slate-900 uppercase italic">
-                      User <span className="text-emerald-600">Profile</span>
+                    <h1 className="text-3xl font-black text-slate-900  ">
+                      User <span className="text-textColor">Profile</span>
                     </h1>
                   </div>
 
@@ -136,7 +136,7 @@ const WorkProfile = () => {
                         setIsEditing(true);
                         toast('Editing Mode Active', { icon: '📝', style: { borderRadius: '10px', fontSize: '10px' } });
                       }} 
-                      className="px-6 py-3 border border-slate-200 rounded-2xl text-[11px] font-black uppercase hover:bg-emerald-600 hover:text-white transition-all"
+                      className="px-6 py-3 border border-slate-200 rounded-2xl text-[11px] font-black uppercase hover:bg-textColor hover:text-white transition-all"
                     >
                       <Edit3 size={16} className="inline mr-2" /> Edit Profile
                     </button>
@@ -171,7 +171,7 @@ const WorkProfile = () => {
                     <button 
                       onClick={handleUpdate}
                       disabled={isUpdating}
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white text-xs font-black uppercase py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg"
+                      className="w-full bg-textColor disabled:bg-slate-300 text-white text-xs font-black uppercase py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg"
                     >
                       {isUpdating ? (
                         <Loader2 className="animate-spin" size={18} />

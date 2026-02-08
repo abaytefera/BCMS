@@ -172,7 +172,7 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 rounded-2xl shadow-lg uppercase tracking-widest text-sm transition-all active:scale-95 disabled:opacity-50"
+          className="w-full bg-primBtn  text-white font-black py-5 rounded-2xl shadow-lg uppercase tracking-widest text-sm transition-all active:scale-95 disabled:opacity-50"
         >
           {editingUser ? 'Update Staff Member' : 'Register & Finalize'}
         </button>
@@ -180,5 +180,5 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
     </div>
   );
 };
-
+    
 export default UserForm;

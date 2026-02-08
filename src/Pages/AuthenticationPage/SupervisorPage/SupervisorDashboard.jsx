@@ -82,7 +82,7 @@ const {user, isloading, error } = useSelector((state) => state.auth);
   if (statsLoading || listLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin text-emerald-500" size={48} />
+        <Loader2 className="animate-spin text-textColor" size={48} />
       </div>
     );
   }

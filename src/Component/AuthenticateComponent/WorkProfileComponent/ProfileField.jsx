@@ -7,7 +7,7 @@ const ProfileField = ({ label, value, icon: Icon, isEditing, onChange, type = "t
     </label>
     <div className="relative group">
       <div className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors ${
-        isEditing ? 'text-emerald-600' : 'text-slate-400'
+        isEditing ? 'text-textColor' : 'text-slate-400'
       }`}>
         <Icon size={18} />
       </div>
@@ -19,7 +19,7 @@ const ProfileField = ({ label, value, icon: Icon, isEditing, onChange, type = "t
         onChange={(e) => onChange(e.target.value)}
         className={`w-full rounded-2xl pl-14 pr-5 py-4 text-sm transition-all outline-none border
           ${isEditing 
-            ? 'border-emerald-500 bg-white text-slate-900 shadow-sm ring-1 ring-emerald-500/20' 
+            ? 'border-textColor bg-white text-slate-900 shadow-sm ring-1 ring-textColor' 
             : 'border-slate-100 bg-slate-50/50 text-slate-500 opacity-80 cursor-not-allowed'
           }`}
       />

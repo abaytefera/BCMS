@@ -73,12 +73,13 @@ const Sidebar = () => {
         to={item.url}
         onClick={() => setIsOpen(false)} 
         className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all ${
-          isActive ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-600'
+          isActive ? 'bg-primBtn text-white shadow-md' : 'text-slate-500 hover:bg-emerald-50 hover:text-textColor'
         }`}
       >
         <item.icon size={18} />
         <span className="font-medium text-[13px]">{item.label}</span>
       </Link>
+    
     );
   };
 
@@ -112,17 +113,18 @@ const Sidebar = () => {
         <div className="flex flex-col h-full p-4 overflow-hidden">
           <div className="flex-shrink-0  self-center mb-8 px-2">
             <Link to={dashboardUrl} onClick={() => setIsOpen(false)}>
-              <img src="/logo2.jpg" alt="Logo" className="w-30 h-25" />
+              <img src="/logo1.jpg" alt="Logo" className="w-30 h-25" />
             </Link>
           </div>
 
           <nav className="flex-1 space-y-7 overflow-y-auto no-scrollbar">
             <section>
               <p className="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{}</p>
-              <Link 
+              <Link    textColor
+             
                 to={dashboardUrl}
                 onClick={() => setIsOpen(false)}
-                className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all ${location.pathname === dashboardUrl ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-500 hover:bg-emerald-50'}`}
+                className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all ${location.pathname === dashboardUrl ? 'bg-primBtn text-white shadow-md' : 'text-slate-500 hover:bg-emerald-50'}`}
               >
                 <LayoutDashboard size={18} />
                 <span className="font-medium text-[13px]">{t.dashboard}</span>
@@ -140,7 +142,7 @@ const Sidebar = () => {
           <div className="pt-4 border-t border-slate-100 space-y-1">
             <button 
               onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-colors ${isSettingsOpen ? 'bg-slate-50 text-emerald-600' : 'text-slate-500 hover:bg-slate-50'}`}
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-colors ${isSettingsOpen ? 'bg-slate-50 text-textColor' : 'text-slate-500 hover:bg-slate-50'}`}
             >
               <div className="flex items-center space-x-3">
                 <Settings size={18} />
@@ -151,17 +153,20 @@ const Sidebar = () => {
 
             {isSettingsOpen && (
               <div className="ml-4 space-y-0.5 mt-1 border-l-2 border-slate-50">
-                <Link to="/Profile" onClick={() => setIsOpen(false)} className="flex items-center space-x-3 px-4 py-2 text-sm text-slate-500 hover:text-emerald-600">
+                <Link to="/Profile" onClick={() => setIsOpen(false)} className="flex items-center space-x-3 px-4 py-2 text-sm text-slate-500 hover:text-textColor">
                   <User size={14} /> <span>{t.profile}</span>
                 </Link>
-                <Link to="/passwordChange" onClick={() => setIsOpen(false)} className="flex items-center space-x-3 px-4 py-2 text-sm text-slate-500 hover:text-emerald-600">
+                <Link to="/passwordChange" onClick={() => setIsOpen(false)} className="flex items-center space-x-3 px-4 py-2 text-sm text-slate-500 hover:text-textColor">
                   <Lock size={14} /> <span>{t.password}</span>
                 </Link>
                 {role === 'ADMIN' && (
-                  <Link to="/SystemMg" onClick={() => setIsOpen(false)} className="flex items-center space-x-3 px-4 py-2 text-sm text-emerald-700 font-semibold bg-emerald-50/50 rounded-lg">
+                  <Link to="/SystemMg" onClick={() => setIsOpen(false)} className="flex items-center space-x-3 px-4 py-2 text-sm text-textColor font-semibold bg-emerald-50/50 rounded-lg">
                     <ShieldCheck size={14} /> <span>{t.systemSettings}</span>
                   </Link>
                 )}
+               
+
+
               </div>
             )}
 

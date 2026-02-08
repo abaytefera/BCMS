@@ -31,16 +31,13 @@ const ReportsPage = () => {
     status: '',
   });
 
-  // --- 1. Synchronized Parameter Logic ---
-  // Replaces '+' with spaces and removes empty filters
+  
   const queryString = useMemo(() => {
     const activeParams = {};
     
     Object.entries(filters).forEach(([key, value]) => {
       if (value && value !== "") {
-        // Step 1: Convert to string
-        // Step 2: Replace all '+' with a literal space ' '
-        // Step 3: Trim whitespace
+    
         activeParams[key] = String(value).replace(/\+/g, ' ').trim();
       }
     });
@@ -159,7 +156,7 @@ const ReportsPage = () => {
             <header className="mb-10 flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-black text-slate-900">
-                  Analytics <span className="text-green-600">Reports</span>
+                  Analytics <span className="text-textColor">Reports</span>
                 </h1>
                 <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-[0.2em]">Data Intelligence Portal</p>
               </div>

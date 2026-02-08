@@ -70,7 +70,7 @@ const ComplaintListPage = () => {
             {/* ===== HEADER ===== */}
             <header className="relative top-10">
               <h1 className="text-2xl font-black capitalize">
-                Complaints <span className="text-emerald-600">{type}</span>
+                Complaints <span className="text-textColor">{type}</span>
               </h1>
             </header>
 
@@ -120,7 +120,7 @@ const ComplaintListPage = () => {
                     {isLoading || isFetching ? (
                       <tr>
                         <td colSpan="4" className="px-8 py-24 text-center">
-                          <Loader2 className="h-10 w-10 animate-spin text-emerald-600 mx-auto" />
+                          <Loader2 className="h-10 w-10 animate-spin text-textColor mx-auto" />
                           <p>loading Complaints {type} </p>
                         </td>
                       </tr>

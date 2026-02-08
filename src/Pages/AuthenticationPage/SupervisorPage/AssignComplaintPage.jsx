@@ -123,7 +123,7 @@ console.log({
             <h1 className="text-3xl font-black mb-2">
               {Language === "AMH" ? "የምደባ ዝግጅት" : "Assignment Setup"}
             </h1>
-            <p className="text-emerald-500 font-bold mb-10 text-sm tracking-widest">COMPLAINT ID: #{id}</p>
+            <p className="text-textColor font-bold mb-10 text-sm tracking-widest">COMPLAINT ID: #{id}</p>
 
             <div className="space-y-8">
               <AssignSelector
@@ -144,7 +144,7 @@ console.log({
               <button
                 onClick={handleDeploy}
                 disabled={isDeploying || loading}
-                className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-black py-5 rounded-2xl uppercase tracking-widest transition-all disabled:bg-slate-300 shadow-lg shadow-emerald-100"
+                className="w-full bg-textColor  text-white font-black py-5 rounded-2xl uppercase tracking-widest transition-all disabled:bg-slate-300 shadow-lg shadow-emerald-100"
               >
                 {isDeploying ? "Processing..." : "Confirm Assignment"}
               </button>

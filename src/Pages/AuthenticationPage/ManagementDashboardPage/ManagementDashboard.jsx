@@ -58,7 +58,7 @@ const ManagementDashboard = () => {
   if (statsLoading || chartsLoading || isLoadingCompile) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="animate-spin text-emerald-600" size={48} />
+        <Loader2 className="animate-spin text-textColor" size={48} />
       </div>
     );
   }

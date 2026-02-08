@@ -8,7 +8,7 @@ const AssignSelector = ({ label, value, options, onChange, icon: Icon }) => (
     </label>
     <div className="relative group">
       {/* Icon Section */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 transition-colors">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-textColor transition-colors">
         {Icon ? <Icon size={18} /> : <User size={18} />}
       </div>
 
@@ -16,7 +16,7 @@ const AssignSelector = ({ label, value, options, onChange, icon: Icon }) => (
         value={value}
         onChange={(e) => onChange(e.target.value)}
         /* Updated colors to match your white/slate theme and removed shadow */
-        className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-10 text-slate-800 font-bold appearance-none outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 transition-all cursor-pointer"
+        className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-10 text-slate-800 font-bold appearance-none outline-none focus:border-textColor focus:ring-1 focus:ring-textColor transition-all cursor-pointer"
       >
         <option value="" className="text-slate-400">
           Select an officer...

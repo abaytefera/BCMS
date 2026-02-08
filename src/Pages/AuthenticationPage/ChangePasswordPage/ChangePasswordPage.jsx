@@ -118,7 +118,7 @@ const Dispath=useDispatch()
 
             <div className="relative z-10">
               <div className="flex flex-col items-center text-center mb-10">
-                <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-4 border border-emerald-100">
+                <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-textColor mb-4 border border-emerald-100">
                   {isLoading ? (
                     <Loader2 size={32} className="animate-spin" />
                   ) : (
@@ -174,7 +174,7 @@ const Dispath=useDispatch()
                   <button
                     type="submit"
                     disabled={isLoading || !currentPass || !newPass}
-                    className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-100 disabled:text-slate-400 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg shadow-emerald-200 active:scale-95"
+                    className="w-full bg-textColor disabled:bg-slate-100 disabled:text-slate-400 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg shadow-emerald-200 active:scale-95"
                   >
                     {isLoading ? (
                       <Loader2 size={20} className="animate-spin" />

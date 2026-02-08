@@ -85,7 +85,7 @@ const handleLogin = async (e) => {
         <div className={`w-full max-w-md bg-white border border-gray-100 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 p-10 flex flex-col items-center z-10 transition-all duration-300 ${showSuccess ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}`}>
           
          <div className='flex flex-col'>
-          <img src="/logo2.jpg" alt="" className='w-40 h-auto' />
+          <img src="/logo1.jpg" alt="" className='w-40 h-auto' />
           
           </div>
           <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-8">
@@ -121,24 +121,32 @@ const handleLogin = async (e) => {
                 />
             </div>
 
-          
-            <button
-              type="submit"
-              disabled={isloading || showSuccess}
-              className="group relative w-full mt-10 overflow-hidden rounded-2xl bg-emerald-500 p-4 transition-all hover:bg-emerald-600 active:scale-95 disabled:opacity-50 shadow-xl shadow-emerald-200"
-            >
-              <div className="relative flex items-center justify-center gap-3">
-                {isloading ? (
-                  <Loader2 className="animate-spin text-white" size={22} />
-                ) : (
-                  <span className="text-sm font-black uppercase tracking-[0.2em] text-white">
-                    {t.loginBtn}
-                  </span>
-                )}
-              </div>
-              {/* Subtle shining effect on hover */}
-              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
-            </button>
+          <button
+  type="submit"
+  disabled={isloading || showSuccess}
+  className="group relative w-full mt-10 overflow-hidden rounded-2xl 
+             bg-primBtn p-4 transition-all
+             hover:brightness-110 active:scale-95
+             disabled:opacity-50
+             shadow-2xl shadow-[#73C2FB]/60"
+>
+  <div className="relative flex items-center justify-center gap-3">
+    {isloading ? (
+      <Loader2 className="animate-spin text-white" size={22} />
+    ) : (
+      <span className="text-sm font-extrabold uppercase tracking-[0.25em] text-white">
+        {t.loginBtn}
+      </span>
+    )}
+  </div>
+
+  {/* Strong shine effect */}
+  <div className="absolute inset-0 -translate-x-full 
+                  bg-gradient-to-r 
+                  from-transparent via-white/40 to-transparent 
+                  transition-transform duration-500 group-hover:translate-x-full" />
+</button>
+           
           </form>
 
           

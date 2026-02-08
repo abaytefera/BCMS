@@ -67,7 +67,7 @@ const AdminDashboard = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="animate-spin text-emerald-600" size={48} />
+        <Loader2 className="animate-spin text-textColor" size={48} />
       </div>
     );
   }
@@ -84,11 +84,11 @@ const AdminDashboard = () => {
 
             {/* ================= PAGE HEADER ================= */}
             <div>
-              <h1 className="text-4xl font-black text-green-600 tracking-tight capitalize">
+              <h1 className="text-4xl font-black text-textColor tracking-tight capitalize">
                 {t.title}
               </h1>
               <p className="text-gray-500 font-bold text-[10px] uppercase tracking-[0.2em] mt-2 flex items-center gap-3">
-                <span className="w-10 h-[2px] bg-emerald-500"></span>
+                <span className="w-10 h-[2px] bg-primBtn"></span>
                 {t.subtitle}
               </p>
             </div>

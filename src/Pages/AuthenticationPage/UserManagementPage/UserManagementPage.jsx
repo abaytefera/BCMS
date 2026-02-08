@@ -92,7 +92,7 @@ const UserManagementPage = () => {
             {/* HEADER */}
             <header className="text-left">
               <h1 className="text-2xl relative top-10 font-black capitalize">
-                Staff <span className="text-emerald-600">Directory</span>
+                Staff <span className="text-textColor">Directory</span>
               </h1>
             </header>
 
@@ -103,7 +103,7 @@ const UserManagementPage = () => {
                 <div className={`flex  justify-end`}>
                   <button
                     onClick={() => { setEditingUser(null); setShowUserForm(true); }}
-                    className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-black rounded-full hover:bg-emerald-700 transition"
+                    className="flex items-center gap-2 px-6 py-3 bg-primBtn text-white font-black rounded-full hover:bg-primBtn transition"
                   >
                     <Plus size={16} /> Register Staff
                   </button>
@@ -113,8 +113,8 @@ const UserManagementPage = () => {
               {/* TABLE */}
               {isLoading ? (
                 <div className="flex flex-col items-center relative bottom-10 py-20 bg-white rounded-3xl border">
-                  <Loader2 className="animate-spin text-emerald-600 mb-3" size={40} />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <Loader2 className="animate-spin text-textColor mb-3" size={40} />
+                  <span className="text-[10px] font-black capitalize tracking-widest text-slate-400">
                     Loading staff...
                   </span>
                 </div>

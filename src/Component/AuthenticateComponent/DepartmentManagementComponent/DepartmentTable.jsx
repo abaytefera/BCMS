@@ -95,7 +95,7 @@ const DepartmentTable = ({ data = [], onEdit, onToggleStatus }) => {
               <tr key={dept.id || dept._id} className="hover:bg-slate-50/50 transition-all">
                 <td className="px-8 py-6">
                   <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-2xl transition-colors ${dept.is_active ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                    <div className={`p-3 rounded-2xl transition-colors ${dept.is_active ? 'bg-emerald-50 text-textColor' : 'bg-slate-100 text-slate-400'}`}>
                       <Building2 size={22} />
                     </div>
                     <span className={`font-bold text-sm capitalize tracking-tight ${dept.is_active ? "text-slate-800" : "text-slate-400"}`}>

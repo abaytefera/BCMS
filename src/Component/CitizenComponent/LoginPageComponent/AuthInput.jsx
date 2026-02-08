@@ -10,7 +10,7 @@ const AuthInput = ({ icon: Icon, type, placeholder, value, onChange }) => {
   return (
     <div className="relative w-full mb-4 group">
       {/* Left Icon */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-textColor transition-colors">
         <Icon size={20} />
       </div>
 
@@ -20,7 +20,7 @@ const AuthInput = ({ icon: Icon, type, placeholder, value, onChange }) => {
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full bg-white/60 border border-slate-200 py-4 pl-12 pr-12 rounded-2xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all placeholder:text-slate-400 text-slate-700"
+        className="w-full bg-white/60 border border-textColor py-4 pl-12 pr-12 rounded-2xl outline-none focus:border-textColor focus:ring-1 focus:ring-textColor transition-all placeholder:text-slate-400 text-slate-700"
       />
 
       {/* Password Toggle Button */}

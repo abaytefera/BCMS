@@ -40,7 +40,7 @@ const AdminDashboardChart = ({ data, language }) => {
     <div className="bg-white border border-gray-100 rounded-[2rem] p-8 shadow-sm h-full">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-2.5 bg-emerald-50 rounded-xl text-emerald-600">
+        <div className="p-2.5 bg-emerald-50 rounded-xl text-primBtn">
           <BarChart3 size={22} />
         </div>
         <div>

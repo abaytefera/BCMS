@@ -57,8 +57,8 @@ const CategoryForm = ({ editingCat, departments, onSave, onCancel }) => {
       className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-2xl shadow-slate-200/60 sticky top-32 transition-all"
     >
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-black text-green-600 capitalize  items-center gap-2 tracking-tight">
-          <Layers className="text-emerald-500" size={24} />
+        <h2 className="text-xl font-black text-textColor capitalize  items-center gap-2 tracking-tight">
+          <Layers className="text-textColor" size={24} />
           {editingCat ?  'Edit Category' : 'Category Register'}
         </h2>
 
@@ -142,7 +142,7 @@ const CategoryForm = ({ editingCat, departments, onSave, onCancel }) => {
 
           <button 
             type="submit"
-            className={`px-6 py-3 rounded-2xl bg-green-500 font-black flex items-center gap-2 text-white transition-all `}
+            className={`px-6 py-3 rounded-2xl bg-textColor font-black flex items-center gap-2 text-white transition-all `}
           >
          
             <span className="uppercase tracking-[0.2em] text-xs">

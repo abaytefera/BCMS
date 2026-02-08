@@ -130,7 +130,7 @@ const DepartmentForm = ({
           type="submit"
           disabled={isSaving}
           className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-white transition-all transform active:scale-[0.98]
-            bg-emerald-500 shadow-lg shadow-emerald-200 hover:bg-emerald-600
+            bg-textColor shadow-lg shadow-emerald-200 
             ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}
           `}
         >

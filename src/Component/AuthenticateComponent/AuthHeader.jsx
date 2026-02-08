@@ -60,7 +60,7 @@ const AuthHeader = ({ True }) => {
 
             {/* Officer Profile */}
             <div className={`flex ${True && "md:mr-20"} items-center space-x-3 p-1.5 pr-4 rounded-full border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer`}>
-              <div className="w-10 h-10 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center overflow-hidden shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-primBtn border-2 border-white flex items-center justify-center overflow-hidden shadow-sm">
                 <User className="text-white" size={24} />
               </div>
               <div className="flex flex-col">
@@ -87,8 +87,9 @@ const AuthHeader = ({ True }) => {
         <div className="md:hidden bg-white shadow-2xl border-t p-6 animate-in slide-in-from-top duration-300">
           <div className="flex flex-col space-y-6">
             <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-2xl">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-white">
+              <div className="w-12 h-12 rounded-full bg-primBtn flex items-center justify-center text-white">
                 <User size={28} />
+               
               </div>
               <div>
                 <p className="text-slate-900 font-bold">{user?.username}</p>

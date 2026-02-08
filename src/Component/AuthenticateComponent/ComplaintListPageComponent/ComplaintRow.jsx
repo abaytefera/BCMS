@@ -59,7 +59,7 @@ const ComplaintRow = ({ complaint }) => {
       {/* CITIZEN INFO (GREEN AVATAR) */}
       <td className="px-8 py-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center text-xs font-black shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-textColor text-white flex items-center justify-center text-xs font-black shadow-sm">
             {name.charAt(0).toUpperCase()}
           </div>
           <div>

@@ -42,7 +42,7 @@ const UserTable = ({ users = [], onEdit, onDelete, isAdmin }) => {
                 <tr key={user.id || user._id} className="group hover:bg-slate-50/50 transition-colors">
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                      <div className="w-10 h-10 rounded-full bg-emerald-100/50 text-textColor flex items-center justify-center font-bold">
                         {(user.fullName || user.full_name || "U").charAt(0).toUpperCase()}
                       </div>
                       <span className="font-bold text-slate-700">{user.fullName || user.full_name}</span>
@@ -50,7 +50,7 @@ const UserTable = ({ users = [], onEdit, onDelete, isAdmin }) => {
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-                      <Building2 size={14} className="text-emerald-500" />
+                      <Building2 size={14} className="text-textColor" />
                       {user.department || user.Department?.name || "N/A"}
                     </div>
                   </td>
