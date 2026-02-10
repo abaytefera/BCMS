@@ -31,7 +31,7 @@ export const departmentApi = APi.injectEndpoints({
     // DELETE department
     deleteDepartment: builder.mutation({
       query: (id) => ({
-        url: `/departments/${id}`,
+        url: `api/departments/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Department', 'Dashboard'],

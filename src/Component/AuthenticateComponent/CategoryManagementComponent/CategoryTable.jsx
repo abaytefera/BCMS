@@ -9,11 +9,13 @@ import {
   Timer,
   AlertCircle,
   AlertTriangle,
+  Trash2,
 } from "lucide-react";
 
-const CategoryTable = ({ categories = [], onEdit, onToggle }) => {
+const CategoryTable = ({ categories = [], onEdit, onToggle, onDelete }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [confirmToggle, setConfirmToggle] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const filteredCategories = categories.filter((cat) => {
     const searchLower = searchTerm.toLowerCase();
@@ -23,8 +25,6 @@ const CategoryTable = ({ categories = [], onEdit, onToggle }) => {
     );
   });
 
-  const handleToggleClick = (cat) => setConfirmToggle(cat);
-
   const confirmAction = () => {
     if (confirmToggle) {
       onToggle(confirmToggle.id || confirmToggle._id);
@@ -32,10 +32,17 @@ const CategoryTable = ({ categories = [], onEdit, onToggle }) => {
     }
   };
 
+  const confirmDeletion = () => {
+    if (confirmDelete) {
+      onDelete(confirmDelete.id || confirmDelete._id);
+      setConfirmDelete(null);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6 w-full relative">
       
-      {/* ================= MODAL: PROFESSIONAL DESIGN ================= */}
+      {/* ================= MODAL: STATUS TOGGLE ================= */}
       {confirmToggle && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-300">
           <div className="bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl border border-slate-100 flex flex-col items-center text-center">
@@ -59,10 +66,42 @@ const CategoryTable = ({ categories = [], onEdit, onToggle }) => {
               <button 
                 onClick={confirmAction}
                 className={`flex-1 py-4  rounded-2xl text-white font-bold text-[11px] uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all ${
-                  confirmToggle.is_active ? 'bg-slate-900 shadow-slate-200' : 'bg-emerald-600 shadow-emerald-200'
+                  confirmToggle.is_active ? 'bg-rose-500 shadow-slate-200' : 'bg-emerald-600 shadow-emerald-200'
                 }`}
               >
                 Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: DELETE CONFIRMATION ================= */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-rose-900/20 backdrop-blur-md animate-in zoom-in duration-300">
+          <div className="bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl border border-rose-100 flex flex-col items-center text-center">
+            <div className="mb-6 p-5 rounded-3xl bg-rose-50 text-rose-500">
+              <Trash2 size={40} strokeWidth={1.5} />
+            </div>
+            
+            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Delete Category?</h3>
+            <p className="text-slate-500 mt-3 text-sm leading-relaxed">
+           Warning: Deleting this category will also delete all compliant data. This cannot be undone. Are you sure?
+              <span className="block font-semibold text-rose-600 mt-1 italic">"{confirmDelete.name}"</span>
+            </p>
+
+            <div className="flex gap-3 w-full mt-8">
+              <button 
+                onClick={() => setConfirmDelete(null)}
+                className="flex-1 py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-slate-200 transition-all"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDeletion}
+                className="flex-1 py-4 rounded-2xl bg-rose-600 text-white font-bold text-[11px] uppercase tracking-[0.2em] shadow-lg shadow-rose-200 active:scale-95 transition-all"
+              >
+                Delete
               </button>
             </div>
           </div>
@@ -121,7 +160,6 @@ const CategoryTable = ({ categories = [], onEdit, onToggle }) => {
                 </td>
 
                 <td className="px-8 py-6 text-right">
-                  {/* OPACITY CLASSES REMOVED - BUTTONS ALWAYS VISIBLE */}
                   <div className="flex justify-end gap-3 transition-opacity">
                     <button 
                       onClick={() => onEdit(cat)} 
@@ -131,7 +169,7 @@ const CategoryTable = ({ categories = [], onEdit, onToggle }) => {
                       <Edit3 size={18} />
                     </button>
                     <button
-                      onClick={() => handleToggleClick(cat)}
+                      onClick={() => setConfirmToggle(cat)}
                       className={`p-2.5 rounded-xl transition-all ${
                         cat.is_active 
                         ? "text-slate-400 hover:text-rose-500 hover:bg-rose-50" 
@@ -140,6 +178,13 @@ const CategoryTable = ({ categories = [], onEdit, onToggle }) => {
                       title={cat.is_active ? "Deactivate" : "Activate"}
                     >
                       {cat.is_active ? <ShieldX size={18} /> : <CheckCircle2 size={18} />}
+                    </button>
+                    <button
+                      onClick={() => setConfirmDelete(cat)}
+                      className="p-2.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                      title="Delete"
+                    >
+                      <Trash2 size={18} />
                     </button>
                   </div>
                 </td>
@@ -155,15 +200,18 @@ const CategoryTable = ({ categories = [], onEdit, onToggle }) => {
           <div key={cat.id || cat._id} className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-md">
               <div className="flex justify-between items-start mb-4">
                 <h4 className={`font-bold text-base ${cat.is_active ? 'text-slate-900' : 'text-slate-400 line-through'}`}>{cat.name}</h4>
-                {cat.is_active ? 
-                  <CheckCircle2 size={16} className="text-emerald-500" /> : 
-                  <ShieldX size={16} className="text-slate-300" />
-                }
+                <div className="flex gap-2">
+                   <button onClick={() => setConfirmDelete(cat)} className="text-rose-400 p-1"><Trash2 size={16}/></button>
+                   {cat.is_active ? 
+                    <CheckCircle2 size={16} className="text-emerald-500" /> : 
+                    <ShieldX size={16} className="text-slate-300" />
+                  }
+                </div>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => onEdit(cat)} className="flex-1 py-3 bg-slate-50 rounded-xl text-[10px] font-black uppercase text-slate-500">Edit</button>
                 <button 
-                  onClick={() => handleToggleClick(cat)} 
+                  onClick={() => setConfirmToggle(cat)} 
                   className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase ${cat.is_active ? 'bg-rose-50 text-rose-600' : 'bg-emerald-600 text-white'}`}
                 >
                   {cat.is_active ? 'Deactivate' : 'Activate'}

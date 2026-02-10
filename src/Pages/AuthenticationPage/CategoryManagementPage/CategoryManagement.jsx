@@ -4,6 +4,7 @@ import {
   useGetCategoriesQuery,
   useCreateCategoryMutation,
   useOneUpdateMutation,
+  useDeleteCategoryMutation, // Assuming this exists in your API slice
 } from '../../../Redux/categoryApi';
 import { useGetDepartmentsQuery } from '../../../Redux/departmentApi';
 
@@ -38,6 +39,8 @@ const CategoryManagement = () => {
 
   const [OneUpdate, { isLoading: isUpdating, error: updateError }] =
     useOneUpdateMutation();
+
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   const { data: departments, error: dError } = useGetDepartmentsQuery();
 
@@ -96,6 +99,17 @@ const CategoryManagement = () => {
     }
   };
 
+  /* ===================== DELETE CATEGORY ===================== */
+  const handleDelete = async (id) => {
+    const toastId = toast.loading('Deleting category...');
+    try {
+      await deleteCategory(id).unwrap();
+      toast.success('Category deleted successfully', { id: toastId });
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to delete category', { id: toastId });
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -116,7 +130,7 @@ const CategoryManagement = () => {
                 Category <span className="text-textColor">Management</span>
               </h1>
             </header>
-<div className={`relative ${ isLoading &&("space-y-20 max-sm:space-y-20  ")} max-sm:space-y-4 md:bottom-10`}>
+            <div className={`relative ${ isLoading &&("space-y-20 max-sm:space-y-20  ")} max-sm:space-y-4 md:bottom-10`}>
 
             {/* REGISTER BUTTON */}
             <div className="flex justify-end">
@@ -156,6 +170,7 @@ const CategoryManagement = () => {
                   );
                   if (category) handleToggleStatus(category);
                 }}
+                onDelete={handleDelete}
               />
             )}
           </div>

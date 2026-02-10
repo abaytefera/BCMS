@@ -50,7 +50,7 @@ const SystemSettings = () => {
 
   if (isLoading) return (
     <div className="min-h-screen bg-white flex items-center justify-center">
-      <Loader2 className="animate-spin text-emerald-600" size={40} />
+      <Loader2 className="animate-spin text-textColor" size={40} />
     </div>
   );
 
