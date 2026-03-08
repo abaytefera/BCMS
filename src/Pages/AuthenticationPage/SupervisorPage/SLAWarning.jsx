@@ -10,7 +10,9 @@ const SLAWarning = ({ title, count, icon: Icon,onClick, wave = 'up' }) => {
     'not assigned': 'bg-gradient-to-br from-purple-400 via-purple-500 to-indigo-600 text-white',
     'resolved': 'bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-500 text-white',
     'rejected': 'bg-gradient-to-br from-rose-400 via-rose-500 to-pink-500 text-white',
-    'active officers': 'bg-gradient-to-br from-teal-400 via-teal-500 to-cyan-500 text-white'
+    'active officers': 'bg-gradient-to-br from-teal-400 via-teal-500 to-cyan-500 text-white',
+    'urgent complaint': 'bg-gradient-to-br from-red-500 via-red-600 to-orange-500 text-white shadow-lg shadow-red-200'
+
   };
 
   const defaultStyle = 'bg-white border border-gray-100 text-gray-900';

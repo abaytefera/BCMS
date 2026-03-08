@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ChangeLanguage } from "../../Redux/WebState";
 import { Link } from "react-router-dom";
 import { User } from "lucide-react"; 
+import NotificationBell from "./Notification";
 
 const AuthHeader = ({ True }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,12 +53,15 @@ const AuthHeader = ({ True }) => {
               />
             </Link>
           </div>
+          <div className="md:hidden">
+           <NotificationBell></NotificationBell>
+           </div>
 
           {/* Desktop Right Menu */}
           <div className="hidden md:flex items-center space-x-6">
             
-           
-
+          
+ <NotificationBell></NotificationBell>
             {/* Officer Profile */}
             <div className={`flex ${True && "md:mr-20"} items-center space-x-3 p-1.5 pr-4 rounded-full border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer`}>
               <div className="w-10 h-10 rounded-full bg-primBtn border-2 border-white flex items-center justify-center overflow-hidden shadow-sm">

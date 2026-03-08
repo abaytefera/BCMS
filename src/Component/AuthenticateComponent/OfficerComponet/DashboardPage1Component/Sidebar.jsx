@@ -5,7 +5,12 @@ import {
   Lock, User, ShieldCheck, BarChart3, 
   Briefcase, Users, CheckCircle2, ListTodo, FileText, 
   FolderTree, Building2, AlertTriangle, Clock, UserCheck, 
-  XCircle, PlayCircle, Activity, Database, Menu, X 
+  XCircle, PlayCircle, Activity, Database, Menu, X, 
+  AlertCircle,
+  CalendarCheck,
+  Layers,
+  Timer,
+  MapPin
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../../../../Redux/auth';
@@ -23,6 +28,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
+      
       navigate('/login');
     }
   }, [user, isAuthLoading, navigate]);
@@ -52,7 +58,8 @@ const Sidebar = () => {
     { icon: ListTodo, label: "Not Assigned", url: "/Complaintlist/supervisor/unassigned", visible: role === 'SUPERVISOR' },
     { icon: XCircle, label: "Rejected", url: "/Complaintlist/supervisor/rejected", visible: role === 'SUPERVISOR' },
     { icon: CheckCircle2, label: "Resolved", url: "/Complaintlist/supervisor/resolved", visible: role === 'SUPERVISOR' },
- 
+        { icon:AlertCircle , label: " urgent complaint", url: "/Complaintlist/SUPERVISOR/urgent", visible: role === 'SUPERVISOR' },
+
     { icon: UserCheck, label: "Active Officer", url: "/userMg", visible: role === 'SUPERVISOR' },
     { icon: Briefcase, label: "Assigned", url: "/Complaintlist/officer/assigned", visible: role === 'OFFICER' },
     { icon: PlayCircle, label: "In Progress", url: "/Complaintlist/officer/in_progress", visible: role === 'OFFICER' },
@@ -62,6 +69,42 @@ const Sidebar = () => {
     { icon: FileText, label: "Complaints", url: "/Complaintlist/admin/list/", visible: role === 'MANAGER' },
     
     { icon: BarChart3, label: "Reports", url: "/Report", visible: role === 'MANAGER' },
+  
+
+  { 
+    icon: CalendarCheck, 
+    label: "Scheduled Meetings", 
+    url: "/secretary/list/status/SCHEDULED", 
+    visible: ['SECRETARY'].includes(role) 
+  },
+  { 
+    icon: CheckCircle2, 
+    label: "Approved Meetings", 
+    url: "/secretary/list/status/APPROVED", 
+    visible: ['SECRETARY'].includes(role) 
+  },
+ 
+  { 
+    icon: Layers, 
+    label: "Scheduled Today", 
+    url: "/secretary/list/timeframe/today", 
+    visible: [ 'MANAGER'].includes(role) 
+  },
+  { 
+    icon: Timer, 
+    label: "Scheduled This Week", 
+    url: "/secretary/list/timeframe/week", 
+    visible: [ 'MANAGER'].includes(role) 
+  },
+  { 
+    icon: Activity, 
+    label: "Monthly Completed", 
+    url: "/secretary/list/stat/completed", 
+    visible: [ 'MANAGER'].includes(role) 
+  },
+   { icon: XCircle, label: "Escalated Complaints", url: "/secretary/list/stat/escalated", visible: role === 'MANAGER' },
+
+  
   ];
 
 

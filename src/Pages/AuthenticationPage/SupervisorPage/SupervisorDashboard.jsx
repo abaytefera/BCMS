@@ -2,7 +2,8 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from 'react-router-dom';
 import { 
-  BarChart3, UserPlus, CheckCircle2, Users, XCircle, Loader2 
+  BarChart3, UserPlus, CheckCircle2, Users, XCircle, Loader2, 
+  AlertCircle
 } from 'lucide-react';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip 
@@ -11,6 +12,7 @@ import {
 // API
 import { useGetSupervisorStatsQuery } from '../../../Redux/supervisorApi';
 import { useGetComplaintsDashboardQuery } from '../../../Redux/complaintApi';
+
 
 // Components
 import Sidebar from '../../../Component/AuthenticateComponent/OfficerComponet/DashboardPage1Component/Sidebar';
@@ -29,8 +31,8 @@ const {user, isloading, error } = useSelector((state) => state.auth);
   const { isLoading: statsLoading, error: statsError } = useGetSupervisorStatsQuery();
   const { data: CompileList, isLoading: listLoading, error: listError } =
     useGetComplaintsDashboardQuery('supervisor');
+    
 
-  // Logout on 401
   useEffect(() => {
     if (statsError?.status === 401 || listError?.status === 401) {
       localStorage.removeItem('authToken');
@@ -39,12 +41,14 @@ const {user, isloading, error } = useSelector((state) => state.auth);
     }
   }, [statsError, listError, dispatch, navigate]);
 
+
   // Translations
   const t = useMemo(() => ({
     notAssigned: Language === "AMH" ? "ያልተመደቡ" : "Not Assigned",
     resolved: Language === "AMH" ? "የተፈቱ" : "Resolved",
     rejected: Language === "AMH" ? "ውድቅ የተደረጉ" : "Rejected",
     inProgress: Language === "AMH" ? "በሂደት ላይ" : "In Progress",
+    urgent: Language === "AMH" ? "አስቸኳይ ቅሬታ" : "Urgent Complaint",
     distribution: Language === "AMH" ? "የአቤቱታዎች ስርጭት" : "Complaint Distribution"
   }), [Language]);
 
@@ -93,7 +97,11 @@ const {user, isloading, error } = useSelector((state) => state.auth);
     { title: t.notAssigned, count: CompileList?.notAssigned, icon: UserPlus ,type:"unassigned"},
     { title: t.resolved, count: CompileList?.resolved, icon: CheckCircle2,type:"resolved" },
     { title: t.rejected, count: CompileList?.rejected, icon: XCircle ,type:"rejected"},
+    { title:'Urgent Complaint', count: CompileList?.urgentComplaint, icon: AlertCircle, type: 'urgent' },
     { title: 'Active Officers', count: CompileList?.activeOfficers, icon: Users,type:"user" },
+
+ 
+
   ];
 
   return (

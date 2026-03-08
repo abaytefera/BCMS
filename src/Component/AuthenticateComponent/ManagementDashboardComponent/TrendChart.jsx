@@ -30,7 +30,7 @@ const TrendChart = () => {
           }));
           setChartData(formatted);
         } else {
-          console.error("API did not return an array:", result);
+          console?.error("API did not return an array:", result);
         }
       } catch (error) {
         console.error("Fetch Error:", error);

@@ -1,3 +1,4 @@
+
 import { APi } from "./CenteralAPI";
 
 export const complaintApi = APi.injectEndpoints({
@@ -93,6 +94,57 @@ export const complaintApi = APi.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'InternalNote', id: 'LIST' }],
     }),
+    
+    approveMeeting: builder.mutation({
+      query: ({ compileid, manager_id, commit, isapprove, meeting_id }) => ({
+        url: `/api/workflow/assign-executive`,
+        method: "POST",
+        body: {
+          compileid,
+          manager_id,
+          commit,
+          isapprove,
+          meeting_id
+        }
+      }),
+      invalidatesTags: [{ type: "Complaint", id: "DETAIL" }]
+    }),
+
+    scheduleMeeting: builder.mutation({
+      query: ({ meeting_id, scheduledDate, scheduledTime, durationMinutes, location }) => ({
+        url: `/api/secretary/meetings/${meeting_id}/schedule`,
+     
+        method: "PUT",
+        body: {
+          scheduledDate,
+          scheduledTime,
+          durationMinutes,
+          location
+        }
+      }),
+      invalidatesTags: [{ type: "Complaint", id: "DETAIL" }]
+    }),
+
+    completeMeeting: builder.mutation({
+      query: ({ meeting_id, outcome, outcomeNotes }) => ({
+        url: `/api/secretary/meetings/${meeting_id}/outcome`,
+    
+        method: "POST",
+        body: {
+          outcome,
+          outcomeNotes
+        }
+      }),
+      invalidatesTags: [{ type: "Complaint", id: "DETAIL" }]
+    }),
+
+    cancelMeeting: builder.mutation({
+      query: ({ meeting_id }) => ({
+        url: `/api/workflow/meeting/cancel/${meeting_id}`,
+        method: "PUT"
+      }),
+      invalidatesTags: [{ type: "Complaint", id: "DETAIL" }]
+    })
   }),
 });
 
@@ -107,4 +159,6 @@ export const {
   useGetComplaintsbyCatagoryQuery,
   useGetInternalNotesQuery,
   useCreateInternalNoteMutation
+
 } = complaintApi;
+

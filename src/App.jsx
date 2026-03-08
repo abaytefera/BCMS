@@ -20,6 +20,7 @@ import ChangePasswordPage from './Pages/AuthenticationPage/ChangePasswordPage/Ch
 import WorkProfile from './Pages/AuthenticationPage/WorkProfilepage'
 import ReportsPage from './Pages/AuthenticationPage/ReportsPage/ReportsPage'
 import Dashboard from './Pages/MainDashboard'
+// import SecretaryDashboard from './Pages/SecretaryDashboard/SecretaryDashboard';
 function App() {
   const [count, setCount] = useState(0)
 
@@ -34,6 +35,9 @@ function App() {
          
        
           <Route path='/Complaintlist/:role/:type' Component={ComplaintListPage} />
+          <Route path="/:role/list/:type/:value" element={<ComplaintListPage />} />
+
+         <Route path="/Complaintlist/:role/:type" element={<ComplaintListPage />} />
               <Route path='/DetailList/:id' element={<ComplaintDetails />} />
               
               <Route path='/AssignComplain/:id' element={<AssignComplaintPage/>}></Route>

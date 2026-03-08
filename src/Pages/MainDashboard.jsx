@@ -7,6 +7,7 @@ import OfficerPage1 from './AuthenticationPage/OfficerPage/DashboardPage1';
 import SupervisorDashboard from './AuthenticationPage/SupervisorPage/SupervisorDashboard';
 import ManagementDashboard from './AuthenticationPage/ManagementDashboardPage/ManagementDashboard';
 import { useNavigate } from 'react-router-dom';
+import SecretaryDashboard from './SecretaryDashboard/SecretaryDashboard';
 import { logout } from '../Redux/auth';
 const Dashboard = () => {
   // Pull loading state and user from auth slice
@@ -14,7 +15,7 @@ const Dashboard = () => {
   const Dispatch=useDispatch()
   const navigator=useNavigate();
   
-  // 1. Show a loader while checking authentication state
+
   if (isloading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -50,6 +51,8 @@ navigator('/')
     
     case "MANAGER":
       return <ManagementDashboard />;
+    case  "SECRETARY":
+      return <SecretaryDashboard></SecretaryDashboard>
     
     default:
       return (

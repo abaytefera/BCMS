@@ -5,10 +5,17 @@ export const supervisorApi = APi.injectEndpoints({
   endpoints: (builder) => ({
     getSupervisorStats: builder.query({
       // Correct endpoint for supervisor-level metrics
-      query: () => 'api/dashboard/management',
+      query: () => 'api/dashboard/supervisor',
       providesTags: ['Complaints', 'Dashboard'],
       // Standardizing response to target the 'data' key
       transformResponse: (res) => res || { total: 0, pending: 0, assigned: 0 },
+    }),
+    getActiveManager: builder.query({
+      // Correct endpoint for supervisor-level metrics
+      query: () => '/api/users/executives/active',
+      providesTags: ['user'],
+      // Standardizing response to target the 'data' key
+      transformResponse: (res) => res || [],
     }),
 
     getOfficers: builder.query({
@@ -41,6 +48,6 @@ updateAssign: builder.mutation({
 export const { 
   useGetOfficersQuery, 
 useUpdateAssignMutation,
-   
+ useGetActiveManagerQuery,
   useGetSupervisorStatsQuery, 
 } = supervisorApi;
