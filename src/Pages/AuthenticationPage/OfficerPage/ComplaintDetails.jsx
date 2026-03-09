@@ -205,7 +205,11 @@ const handleCompleteMeeting = async () => {
 
   try {
     toast.loading("Completing meeting...", { id: "complete" });
-
+console.log({
+      meeting_id: complaint?.Meeting?.id,
+      outcome,
+      outcomeNotes
+    })
     await completeMeeting({
       meeting_id: complaint?.Meeting?.id,
       outcome,
@@ -306,7 +310,7 @@ const handleCancelMeeting = async () => {
             
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
               <div className="flex items-center gap-4">
-                <button onClick={() => navigate(-1)} className="p-2 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-colors shadow-sm">
+                <button onClick={() => navigate("/Complaintlist/supervisor/unassigned")} className="p-2 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-colors shadow-sm">
                   <ChevronLeft size={20} />
                 </button>
                 <div>
@@ -500,7 +504,7 @@ const handleCancelMeeting = async () => {
                         <textarea value={statusComment} onChange={(e) => setStatusComment(e.target.value)} className="w-full bg-slate-50 p-4 rounded-2xl text-sm font-medium border-2 border-slate-100 min-h-[120px] outline-none focus:border-textColor transition-all" placeholder="Why is this status being updated?" />
                       </div>
                       <button onClick={handleStatusUpdate} disabled={isUpdating || (selectedStatus === complaint?.status && !statusComment.trim())} className="w-full bg-textColor text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 uppercase tracking-widest text-[11px] transition-all shadow-xl disabled:opacity-30 disabled:cursor-not-allowed">
-                        {isUpdating ? <Loader2 className="animate-spin" size={18} /> : <ShieldCheck size={18} />} Save Resolution
+                        {isUpdating ? <Loader2 className="animate-spin" size={18} /> : <ShieldCheck size={18} />}Update status
                       </button>
                     </div>
                   ) : (
