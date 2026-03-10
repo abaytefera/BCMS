@@ -57,6 +57,7 @@ const UserManagementPage = () => {
       setEditingUser(null);
       setShowUserForm(false);
     } catch (err) {
+      console.log(err)
       toast.error(err?.data?.message || 'Failed to save staff', { id: toastId });
     }
   };

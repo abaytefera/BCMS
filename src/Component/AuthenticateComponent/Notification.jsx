@@ -67,7 +67,7 @@ export default function NotificationBell() {
   }, []);
 
   return (
-    <div className="relative inline-block" ref={dropdownRef}>
+    <div className="relative max-md:left-10 inline-block" ref={dropdownRef}>
       {/* Bell Button */}
       <button
         onClick={() => setOpen(!open)}

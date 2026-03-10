@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { UserPlus, User, Lock, Save, RefreshCw, Phone } from 'lucide-react';
+import { UserPlus, User, Lock, RefreshCw, Phone, Briefcase } from 'lucide-react';
 import { useGetDepartmentsQuery } from '../../../Redux/departmentApi';
+import { useGetActiveManagerQuery } from '../../../Redux/supervisorApi';
 
 const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
   const initialState = {
@@ -14,7 +15,10 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
   };
 
   const [formData, setFormData] = useState(initialState);
+  const [selectedExecutive, setSelectedExecutive] = useState("");
+  
   const { data: depfile } = useGetDepartmentsQuery();
+  const { data: activeManager, isLoading: isLoadingActive } = useGetActiveManagerQuery();
 
   const generatePassword = () => {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -36,25 +40,34 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
         departmentId: editingUser.departmentId?._id || editingUser.departmentId || '',
         password: '' 
       });
+      // Set existing assignment if editing a secretary
+      if (editingUser.assignedExecutive) {
+        setSelectedExecutive(editingUser.assignedExecutive._id || editingUser.assignedExecutive);
+      }
     } else {
       setFormData({ ...initialState, password: generatePassword() });
+      setSelectedExecutive("");
     }
   }, [editingUser]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    const finalData = { 
+    let finalData = { 
       ...formData, 
       role: formData.role.toUpperCase() 
     };
+
+    if (formData.role === 'SECRETARY') {
+      finalData.assignedExecutive =Number(selectedExecutive);
+    }
     
     if (editingUser) {
       delete finalData.password; 
     } else {
       delete finalData.id; 
     }
-    
+    console.log(finalData)
     onSave(finalData);
   };
 
@@ -137,6 +150,7 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
+          {/* ROLE SELECT */}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Role</label>
             <select
@@ -147,19 +161,22 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
             >
               <option value="" disabled>Select Role</option>
               <option value="ADMIN">ADMIN</option>
-              <option value="SUPERVISOR">SUPERVISOR</option> {/* Added Option */}
+              <option value="SUPERVISOR">SUPERVISOR</option>
               <option value="MANAGER">MANAGER</option>
               <option value="OFFICER">OFFICER</option>
+              <option value="SECRETARY">SECRETARY</option>
+              <option value="SECURITY">SECURITY</option>
             </select>
           </div>
 
+          {/* DEPARTMENT SELECT */}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department</label>
             <select
               value={formData.departmentId}
               onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
               className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm outline-none focus:bg-white transition-all"
-              required
+            
             >
               <option value="" disabled>Select Dept</option>
               {depfile?.map((dep) => (
@@ -169,16 +186,34 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
           </div>
         </div>
 
+        {/* CONDITIONAL SECRETARY ASSIGNMENT */}
+        {formData.role === "SECRETARY" && (
+          <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Assign to Executive Manager</label>
+            <select
+              value={selectedExecutive}
+              onChange={(e) => setSelectedExecutive(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm outline-none focus:bg-white transition-all"
+              required
+            >
+              <option value="">Select Executive</option>
+              {activeManager?.map((m) => (
+                <option key={m.id} value={m.id}>{m.full_name || m.username}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-primBtn  text-white font-black py-5 rounded-2xl shadow-lg uppercase tracking-widest text-sm transition-all active:scale-95 disabled:opacity-50"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-lg uppercase tracking-widest text-sm transition-all active:scale-95 disabled:opacity-50"
         >
-          {editingUser ? 'Update Staff Member' : 'Register & Finalize'}
+          {isLoading ? 'Processing...' : editingUser ? 'Update Staff Member' : 'Register & Finalize'}
         </button>
       </form>
     </div>
   );
 };
-    
+
 export default UserForm;
