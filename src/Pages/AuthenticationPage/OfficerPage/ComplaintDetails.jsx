@@ -186,7 +186,7 @@ const handleScheduleMeeting = async () => {
       meeting_id: complaint?.Meeting?.id,
       scheduledDate,
       scheduledTime,
-      durationMinutes,
+      endingdate:durationMinutes,
       location
     }).unwrap();
 
@@ -208,12 +208,14 @@ const handleCompleteMeeting = async () => {
 console.log({
       meeting_id: complaint?.Meeting?.id,
       outcome,
-      outcomeNotes
+      outcomeNotes,
+      endMeeting:durationMinutes
     })
     await completeMeeting({
       meeting_id: complaint?.Meeting?.id,
       outcome,
-      outcomeNotes
+      outcomeNotes,
+      endMeeting:durationMinutes
     }).unwrap();
 
     toast.success("Meeting completed", { id: "complete" });

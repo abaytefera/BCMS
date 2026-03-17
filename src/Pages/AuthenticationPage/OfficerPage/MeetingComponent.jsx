@@ -23,7 +23,7 @@ const MeetingComponent = ({
     if (isRescheduling && meeting) {
       setScheduledDate(meeting.scheduledDate || "");
       setScheduledTime(meeting.scheduledTime || "");
-      setDurationMinutes(meeting.durationMinutes || "");
+      setDurationMinutes(meeting.endingdate || "");
       setLocation(meeting.location || "");
     }
   }, [isRescheduling, meeting, setScheduledDate, setScheduledTime, setDurationMinutes, setLocation]);
@@ -82,7 +82,9 @@ const MeetingComponent = ({
               <input type="date" value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} className="w-full border p-3 rounded-xl" />
               <div className="grid grid-cols-2 gap-2">
                 <input type="time" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} className="w-full border p-3 rounded-xl" />
-                <input type="number" placeholder="Min" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value)} className="w-full border p-3 rounded-xl" />
+                    
+                 <input type="time" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value)} className="w-full border p-3 rounded-xl" />
+
               </div>
               <input placeholder="Location (Room/Link)" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full border p-3 rounded-xl" />
               <button onClick={handleScheduleMeeting} className="w-full bg-primBtn text-white py-3 rounded-xl font-bold  transition-all">
@@ -120,7 +122,8 @@ const MeetingComponent = ({
               <input type="date" value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} className="w-full border p-3 rounded-xl bg-white text-sm" />
               <div className="grid grid-cols-2 gap-2">
                 <input type="time" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} className="w-full border p-3 rounded-xl bg-white text-sm" />
-                <input type="number" placeholder="Min" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value)} className="w-full border p-3 rounded-xl bg-white text-sm" />
+                  <input type="time" value={durationMinutes} onChange={(e) =>  setDurationMinutes(e.target.value)} className="w-full border p-3 rounded-xl bg-white text-sm" />
+
               </div>
               <input placeholder="Update Location" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full border p-3 rounded-xl bg-white text-sm" />
               <button 
@@ -139,7 +142,7 @@ const MeetingComponent = ({
               </div>
               <div className="flex items-center gap-3 text-slate-700">
                 <div className="p-2 bg-slate-100 rounded-lg text-slate-500"><Clock size={16}/></div>
-                <span className="font-semibold text-sm">{meeting.scheduledTime} ({meeting.durationMinutes} min)</span>
+                <span className="font-semibold text-sm">{meeting.scheduledTime}</span>
               </div>
               <div className="flex items-center gap-3 text-slate-700 col-span-full">
                 <div className="p-2 bg-slate-100 rounded-lg text-slate-500"><MapPin size={16}/></div>
@@ -162,6 +165,8 @@ const MeetingComponent = ({
                 onChange={(e) => setOutcomeNotes(e.target.value)} 
                 className="w-full border p-3 rounded-xl text-sm" 
               />
+              <p>meeting ending date</p>
+               <input type="date" value={durationMinutes} onChange={(e) =>  setDurationMinutes(e.target.value)} className="w-full border p-3 rounded-xl bg-white text-sm" />
               <div className="flex gap-2">
                 <button onClick={handleCompleteMeeting} className="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold hover:bg-emerald-700 active:scale-95 transition-all">
                   Complete Meeting
@@ -198,6 +203,7 @@ const MeetingComponent = ({
             {meeting.outcomeNotes && (
               <div className="pt-1">
                 <strong>Notes:</strong> {meeting.outcomeNotes}
+                <p>ending Date:{meeting.endMeeting}</p>
               </div>
             )}
           </div>

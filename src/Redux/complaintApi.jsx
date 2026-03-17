@@ -126,13 +126,14 @@ export const complaintApi = APi.injectEndpoints({
     }),
 
     completeMeeting: builder.mutation({
-      query: ({ meeting_id, outcome, outcomeNotes }) => ({
+      query: ({ meeting_id, outcome, outcomeNotes,endMeeting }) => ({
         url: `/api/secretary/meetings/${meeting_id}/outcome`,
     
         method: "POST",
         body: {
           outcome,
-          outcomeNotes
+          outcomeNotes,
+          endMeeting
         }
       }),
       invalidatesTags: [{ type: "Complaint", id: "DETAIL" }]
