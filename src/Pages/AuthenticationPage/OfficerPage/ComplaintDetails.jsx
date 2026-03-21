@@ -66,6 +66,12 @@ const [
   { isLoading: isApproving, isError: isApproveError, error: approveError }
 ] = complaintApi.useApproveMeetingMutation();
 
+
+useEffect(()=>{
+console.log(complaint)
+
+},[complaint])
+
 const [
   scheduleMeeting,
   { isLoading: isScheduling, isError: isScheduleError, error: scheduleError }
