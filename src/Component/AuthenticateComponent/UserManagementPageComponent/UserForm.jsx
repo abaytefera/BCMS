@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { UserPlus, User, Lock, RefreshCw, Phone, Briefcase } from 'lucide-react';
+import { UserPlus, User, Lock, RefreshCw, Phone } from 'lucide-react';
 import { useGetDepartmentsQuery } from '../../../Redux/departmentApi';
 import { useGetActiveManagerQuery } from '../../../Redux/supervisorApi';
 
@@ -18,7 +18,10 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
   const [selectedExecutive, setSelectedExecutive] = useState("");
   
   const { data: depfile } = useGetDepartmentsQuery();
-  const { data: activeManager, isLoading: isLoadingActive } = useGetActiveManagerQuery();
+  const { data: activeManager } = useGetActiveManagerQuery();
+
+  // Roles that should NOT see or require a Department selection
+  const rolesWithHiddenDept = ['SECRETARY', 'ADMIN', 'MANAGER', 'SECURITY'];
 
   const generatePassword = () => {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -40,7 +43,6 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
         departmentId: editingUser.departmentId?._id || editingUser.departmentId || '',
         password: '' 
       });
-      // Set existing assignment if editing a secretary
       if (editingUser.assignedExecutive) {
         setSelectedExecutive(editingUser.assignedExecutive._id || editingUser.assignedExecutive);
       }
@@ -58,8 +60,14 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
       role: formData.role.toUpperCase() 
     };
 
-    if (formData.role === 'SECRETARY') {
-      finalData.assignedExecutive =Number(selectedExecutive);
+    // If role is in the hidden list, remove departmentId from payload
+    if (rolesWithHiddenDept.includes(finalData.role)) {
+      delete finalData.departmentId;
+    }
+
+    // Special handling for Secretary assignment
+    if (finalData.role === 'SECRETARY') {
+      finalData.assignedExecutive = Number(selectedExecutive);
     }
     
     if (editingUser) {
@@ -67,7 +75,7 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
     } else {
       delete finalData.id; 
     }
-    console.log(finalData)
+
     onSave(finalData);
   };
 
@@ -107,12 +115,10 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
           </div>
         </div>
 
-        {/* PASSWORD */}
+        {/* PASSWORD - Only for new users */}
         {!editingUser && (
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-              Generated Password
-            </label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Generated Password</label>
             <div className="relative">
               <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input
@@ -149,7 +155,8 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        {/* ROLE & DEPARTMENT GRID */}
+        <div className={`grid ${!rolesWithHiddenDept.includes(formData.role) ? 'grid-cols-2' : 'grid-cols-1'} gap-4 transition-all duration-300`}>
           {/* ROLE SELECT */}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Role</label>
@@ -169,26 +176,28 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
             </select>
           </div>
 
-          {/* DEPARTMENT SELECT */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department</label>
-            <select
-              value={formData.departmentId}
-              onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm outline-none focus:bg-white transition-all"
-            
-            >
-              <option value="" disabled>Select Dept</option>
-              {depfile?.map((dep) => (
-                <option key={dep.id || dep._id} value={dep.id || dep._id}>{dep.name}</option>
-              ))}
-            </select>
-          </div>
+          {/* DEPARTMENT SELECT - Conditional Rendering */}
+          {!rolesWithHiddenDept.includes(formData.role) && (
+            <div className="space-y-2 animate-in fade-in slide-in-from-right-2 duration-300">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department</label>
+              <select
+                value={formData.departmentId}
+                onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm outline-none focus:bg-white transition-all"
+                required={!rolesWithHiddenDept.includes(formData.role)}
+              >
+                <option value="" disabled>Select Dept</option>
+                {depfile?.map((dep) => (
+                  <option key={dep.id || dep._id} value={dep.id || dep._id}>{dep.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         {/* CONDITIONAL SECRETARY ASSIGNMENT */}
         {formData.role === "SECRETARY" && (
-          <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+          <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Assign to Executive Manager</label>
             <select
               value={selectedExecutive}
