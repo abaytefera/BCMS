@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { UserPlus, User, Lock, RefreshCw, Phone } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { UserPlus, User, Lock, RefreshCw, Phone, Briefcase, Building2, UserCheck } from 'lucide-react';
 import { useGetDepartmentsQuery } from '../../../Redux/departmentApi';
 import { useGetActiveManagerQuery } from '../../../Redux/supervisorApi';
 
 const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
+  const { DarkMode } = useSelector((state) => state.webState || {});
+  
   const initialState = {
     id: '', 
     username: '',
@@ -20,7 +23,6 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
   const { data: depfile } = useGetDepartmentsQuery();
   const { data: activeManager } = useGetActiveManagerQuery();
 
-  // Roles that should NOT see or require a Department selection
   const rolesWithHiddenDept = ['SECRETARY', 'ADMIN', 'MANAGER', 'SECURITY'];
 
   const generatePassword = () => {
@@ -54,85 +56,85 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    let finalData = { 
-      ...formData, 
-      role: formData.role.toUpperCase() 
-    };
-
-    // If role is in the hidden list, remove departmentId from payload
+    let finalData = { ...formData, role: formData.role.toUpperCase() };
     if (rolesWithHiddenDept.includes(finalData.role)) {
       delete finalData.departmentId;
     }
-
-    // Special handling for Secretary assignment
     if (finalData.role === 'SECRETARY') {
       finalData.assignedExecutive = Number(selectedExecutive);
     }
-    
     if (editingUser) {
       delete finalData.password; 
     } else {
       delete finalData.id; 
     }
-
     onSave(finalData);
   };
 
+  const inputClasses = `w-full transition-all duration-300 rounded-2xl pl-12 pr-5 py-4 text-sm outline-none border 
+    ${DarkMode 
+      ? "bg-slate-800/50 border-slate-700 text-slate-100 focus:border-primBtn focus:bg-slate-800" 
+      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-primBtn focus:bg-white"}`;
+
+  const labelClasses = `text-[11px] font-black capitalize tracking-wide mb-1.5 block ml-1
+    ${DarkMode ? "text-slate-500" : "text-slate-400"}`;
+
   return (
-    <div className="p-8 rounded-[2rem] max-w-2xl mx-auto font-sans">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className={`p-2 transition-colors duration-300 ${DarkMode ? "bg-transparent" : "bg-transparent"}`}>
+      <form onSubmit={handleSubmit} className="space-y-5">
         
-        {/* FULL NAME */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+        {/* Full Name */}
+        <div className="group">
+          <label className={labelClasses}>Full name</label>
           <div className="relative">
-            <UserPlus className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <UserPlus className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${DarkMode ? "text-slate-600 group-focus-within:text-primBtn" : "text-slate-400 group-focus-within:text-primBtn"}`} size={18} />
             <input
               type="text"
               value={formData.full_name} 
               onChange={(e) => setFormData({...formData, full_name: e.target.value})}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm focus:bg-white outline-none transition-all"
-              placeholder="Full Name"
+              className={inputClasses}
+              placeholder="Enter full name"
               required
             />
           </div>
         </div>
 
-        {/* USERNAME */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Username</label>
+        {/* Username */}
+        <div className="group">
+          <label className={labelClasses}>Username</label>
           <div className="relative">
-            <User className="absolute left-5 top-1/2 -translate-y-1/2 text-emerald-600" size={18} />
+            <User className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${DarkMode ? "text-slate-600 group-focus-within:text-primBtn" : "text-slate-400 group-focus-within:text-primBtn"}`} size={18} />
             <input
               type="text"
               value={formData.username}
               onChange={(e) => setFormData({...formData, username: e.target.value})}
-              className="w-full border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm font-bold bg-white text-slate-700 outline-none"
-              placeholder="Username"
+              className={inputClasses}
+              placeholder="e.g. john_doe"
               required
             />
           </div>
         </div>
 
-        {/* PASSWORD - Only for new users */}
+        {/* Password - New Users Only */}
         {!editingUser && (
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Generated Password</label>
+          <div className="group">
+            <label className={labelClasses}>Access password</label>
             <div className="relative">
-              <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500" size={18} />
               <input
                 type="text" 
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="w-full bg-emerald-50 border border-emerald-100 rounded-2xl pl-14 pr-12 py-4 text-sm font-mono text-emerald-700 outline-none"
-                placeholder="Password"
+                className={`w-full rounded-2xl pl-12 pr-12 py-4 text-sm font-mono border transition-all
+                  ${DarkMode 
+                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
+                    : "bg-emerald-50 border-emerald-100 text-emerald-700"}`}
                 required
               />
               <button 
                 type="button"
                 onClick={() => setFormData({...formData, password: generatePassword()})}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-600 hover:rotate-180 transition-transform duration-500"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500 hover:rotate-180 transition-transform duration-500"
               >
                 <RefreshCw size={18} />
               </button>
@@ -140,86 +142,104 @@ const UserForm = ({ editingUser, onCancel, onSave, isLoading }) => {
           </div>
         )}
 
-        {/* PHONE NUMBER */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
+        {/* Phone Number */}
+        <div className="group">
+          <label className={labelClasses}>Phone number</label>
           <div className="relative">
-            <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Phone className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${DarkMode ? "text-slate-600 group-focus-within:text-primBtn" : "text-slate-400 group-focus-within:text-primBtn"}`} size={18} />
             <input
               type="tel"
               value={formData.phone_number} 
               onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm focus:bg-white outline-none transition-all"
-              placeholder="Phone Number"
+              className={inputClasses}
+              placeholder="+251 ..."
             />
           </div>
         </div>
 
-        {/* ROLE & DEPARTMENT GRID */}
-        <div className={`grid ${!rolesWithHiddenDept.includes(formData.role) ? 'grid-cols-2' : 'grid-cols-1'} gap-4 transition-all duration-300`}>
-          {/* ROLE SELECT */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Role</label>
-            <select
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm outline-none focus:bg-white transition-all"
-              required
-            >
-              <option value="" disabled>Select Role</option>
-              <option value="ADMIN">ADMIN</option>
-              <option value="SUPERVISOR">SUPERVISOR</option>
-              <option value="MANAGER">MANAGER</option>
-              <option value="OFFICER">OFFICER</option>
-              <option value="SECRETARY">SECRETARY</option>
-              <option value="SECURITY">SECURITY</option>
-            </select>
+        {/* Role & Dept Grid */}
+        <div className={`grid ${!rolesWithHiddenDept.includes(formData.role) ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+          <div className="group">
+            <label className={labelClasses}>System role</label>
+            <div className="relative">
+              <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <select
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                className={`${inputClasses} appearance-none cursor-pointer`}
+                required
+              >
+                <option value="" disabled>Select role</option>
+                <option value="ADMIN">Admin</option>
+                <option value="SUPERVISOR">Supervisor</option>
+                <option value="MANAGER">Manager</option>
+                <option value="OFFICER">Officer</option>
+                <option value="SECRETARY">Secretary</option>
+                <option value="SECURITY">Security</option>
+              </select>
+            </div>
           </div>
 
-          {/* DEPARTMENT SELECT - Conditional Rendering */}
           {!rolesWithHiddenDept.includes(formData.role) && (
-            <div className="space-y-2 animate-in fade-in slide-in-from-right-2 duration-300">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department</label>
-              <select
-                value={formData.departmentId}
-                onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm outline-none focus:bg-white transition-all"
-                required={!rolesWithHiddenDept.includes(formData.role)}
-              >
-                <option value="" disabled>Select Dept</option>
-                {depfile?.map((dep) => (
-                  <option key={dep.id || dep._id} value={dep.id || dep._id}>{dep.name}</option>
-                ))}
-              </select>
+            <div className="group animate-in fade-in slide-in-from-right-4 duration-500">
+              <label className={labelClasses}>Department</label>
+              <div className="relative">
+                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <select
+                  value={formData.departmentId}
+                  onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+                  className={`${inputClasses} appearance-none cursor-pointer`}
+                  required={!rolesWithHiddenDept.includes(formData.role)}
+                >
+                  <option value="" disabled>Select dept</option>
+                  {depfile?.map((dep) => (
+                    <option key={dep.id || dep._id} value={dep.id || dep._id}>{dep.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           )}
         </div>
 
-        {/* CONDITIONAL SECRETARY ASSIGNMENT */}
+        {/* Secretary Assignment */}
         {formData.role === "SECRETARY" && (
-          <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Assign to Executive Manager</label>
-            <select
-              value={selectedExecutive}
-              onChange={(e) => setSelectedExecutive(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm outline-none focus:bg-white transition-all"
-              required
-            >
-              <option value="">Select Executive</option>
-              {activeManager?.map((m) => (
-                <option key={m.id} value={m.id}>{m.full_name || m.username}</option>
-              ))}
-            </select>
+          <div className="group animate-in fade-in slide-in-from-top-4 duration-500">
+            <label className={labelClasses}>Assign to executive manager</label>
+            <div className="relative">
+              <UserCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <select
+                value={selectedExecutive}
+                onChange={(e) => setSelectedExecutive(e.target.value)}
+                className={`${inputClasses} appearance-none cursor-pointer`}
+                required
+              >
+                <option value="">Select executive</option>
+                {activeManager?.map((m) => (
+                  <option key={m.id} value={m.id}>{m.full_name || m.username}</option>
+                ))}
+              </select>
+            </div>
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-lg uppercase tracking-widest text-sm transition-all active:scale-95 disabled:opacity-50"
-        >
-          {isLoading ? 'Processing...' : editingUser ? 'Update Staff Member' : 'Register & Finalize'}
-        </button>
+        {/* Submit Buttons */}
+        <div className="pt-4 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onCancel}
+            className={`flex-1 py-4 rounded-2xl font-bold capitalize transition-all
+              ${DarkMode ? "bg-slate-800 text-slate-300 hover:bg-slate-700" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="flex-[2] bg-primBtn hover:opacity-90 text-white font-black py-4 rounded-2xl shadow-lg shadow-primBtn/25 capitalize tracking-wide transition-all active:scale-95 disabled:opacity-50"
+          >
+            {isLoading ? 'Processing...' : editingUser ? 'Update' : 'Register'}
+          </button>
+        </div>
       </form>
     </div>
   );

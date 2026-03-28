@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, Mail, Globe, Save, Send, Loader2 } from 'lucide-react';
+import { MessageSquare, Mail, Globe, Save, Send, Loader2, ShieldCheck, Settings2 } from 'lucide-react';
 import { useGetSystemSettingsQuery, useUpdateSettingsMutation } from '../../../Redux/settingsApi';
 import Sidebar from '../../../Component/AuthenticateComponent/OfficerComponet/DashboardPage1Component/Sidebar';
 import AuthHeader from '../../../Component/AuthenticateComponent/AuthHeader';
@@ -7,11 +7,15 @@ import SettingCard from '../../../Component/AuthenticateComponent/SystemSettings
 import { ToggleRow, SettingInput } from '../../../Component/AuthenticateComponent/SystemSettingsComponent/ToggleRow';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../../Redux/auth';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import toast, { Toaster } from 'react-hot-toast';
+
 const SystemSettings = () => {
   const navigate = useNavigate();
-  const Dispath=useDispatch()
-  // 1. Fetch Data from Node.js
+  const dispatch = useDispatch();
+  const { DarkMode } = useSelector((state) => state.webState || {});
+  
+  // 1. Fetch Data
   const { data: serverSettings, isLoading, error } = useGetSystemSettingsQuery();
   const [updateSettings, { isLoading: isSaving }] = useUpdateSettingsMutation();
 
@@ -20,12 +24,10 @@ const SystemSettings = () => {
   // --- 401 REDIRECT LOGIC ---
   useEffect(() => {
     if (error && error.status === 401) {
-      localStorage.removeItem('authToken');
-            Dispath(logout())
+      dispatch(logout());
       navigate('/login', { replace: true });
     }
-  }, [error, navigate]);
-  // --------------------------
+  }, [error, navigate, dispatch]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -40,65 +42,75 @@ const SystemSettings = () => {
   };
 
   const handleGlobalSave = async () => {
+    const toastId = toast.loading("Updating configurations...");
     try {
       await updateSettings(form).unwrap();
-      alert("System configuration updated successfully!");
+      toast.success("System configurations updated successfully!", { id: toastId });
     } catch (err) {
-      alert("Failed to save settings: " + err.data?.message);
+      toast.error("Failed to save settings: " + (err.data?.message || "Unknown error"), { id: toastId });
     }
   };
 
   if (isLoading) return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <Loader2 className="animate-spin text-textColor" size={40} />
+    <div className={`min-h-screen flex items-center justify-center ${DarkMode ? "bg-slate-950" : "bg-white"}`}>
+      <Loader2 className="animate-spin text-primBtn" size={48} />
     </div>
   );
 
   return (
-    <div className="flex min-h-screen bg-white text-slate-800">
+    <div className={`flex min-h-screen transition-colors duration-300 ${DarkMode ? "bg-slate-950 text-slate-100" : "bg-white text-slate-800"}`}>
+      <Toaster position="top-right" />
       <Sidebar role="admin" />
       
       <div className="flex-1 flex flex-col min-w-0">
         <AuthHeader True={true} />
         
-        <main className="flex-1 pt-32 px-6 lg:px-10 pb-20 overflow-y-auto bg-slate-50/50">
-          <div className="max-w-7xl mx-auto">
+        <main className={`flex-1 pt-28 px-6 lg:px-10 pb-20 overflow-y-auto transition-colors duration-300 ${DarkMode ? "bg-slate-950" : "bg-slate-50/50"}`}>
+          <div className="max-w-6xl mx-auto">
             
-            {/* Header Section */}
-            <div className="mb-12">
-              <h1 className="text-4xl font-black text-slate-900 tracking-tighter  leading-none">
-                System <span className="text-textColor">Settings</span>
-              </h1>
-              <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-[10px] mt-3 ml-1">
-                Platform Configuration & Global Rules
-              </p>
+            {/* SaaS Header Section */}
+            <div className="mb-12 flex items-center gap-4">
+               <div className={`p-3 rounded-2xl ${DarkMode ? "bg-primBtn/10 text-primBtn" : "bg-primBtn/5 text-primBtn"}`}>
+                  <Settings2 size={32} />
+               </div>
+               <div>
+                  <h1 className="text-4xl font-black tracking-tight leading-none capitalize">
+                    System <span className="text-textColor">settings</span>
+                  </h1>
+                  <p className={`text-sm font-medium mt-2 capitalize ${DarkMode ? "text-slate-500" : "text-slate-400"}`}>
+                    Platform configuration & global rule engine
+                  </p>
+               </div>
             </div>
 
             {/* Settings Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
               
               {/* SMS GATEWAY */}
-              <SettingCard title="SMS Gateway" icon={MessageSquare} colorClass="border-blue-100 bg-white">
+              <SettingCard title="Sms gateway" icon={MessageSquare} colorClass={DarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-blue-50"}>
                 <ToggleRow 
-                  label="Enable SMS Notifications" 
+                  label="Enable sms notifications" 
                   active={form.smsEnabled || false}
                   onClick={() => handleInputChange('smsEnabled', !form.smsEnabled)}
                 />
                 <SettingInput 
-                  label="Gateway API Key" 
+                  label="Gateway api key" 
                   value={form.smsApiKey || ''}
                   onChange={(e) => handleInputChange('smsApiKey', e.target.value)}
                   type="password" 
                 />
-                <button className="w-full py-3 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-600 hover:text-white transition-all border border-blue-100">
-                  <Send size={14} /> Send Test SMS
+                <button className={`w-full py-3.5 rounded-xl text-xs font-black capitalize tracking-wide flex items-center justify-center gap-2 transition-all border
+                  ${DarkMode 
+                    ? "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700" 
+                    : "bg-blue-50 border-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white"}`}>
+                  <Send size={14} /> Send test sms
                 </button>
               </SettingCard>
 
               {/* EMAIL INTEGRATION */}
-              <SettingCard title="Email Integration" icon={Mail} colorClass="border-purple-100 bg-white">
+              <SettingCard title="Email integration" icon={Mail} colorClass={DarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-purple-50"}>
                 <SettingInput 
-                  label="SMTP Host" 
+                  label="Smtp host" 
                   value={form.smtpHost || ''} 
                   onChange={(e) => handleInputChange('smtpHost', e.target.value)}
                 />
@@ -117,34 +129,35 @@ const SystemSettings = () => {
               </SettingCard>
 
               {/* LANGUAGE & REGION */}
-              <SettingCard title="Language & Region" icon={Globe} colorClass="border-emerald-100 bg-white">
-                <div className="space-y-1 mb-4">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Interface Language</label>
+              <SettingCard title="Language & region" icon={Globe} colorClass={DarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-emerald-50"}>
+                <div className="space-y-2 mb-4">
+                  <label className={`text-[11px] font-black capitalize tracking-wide ml-1 ${DarkMode ? "text-slate-500" : "text-slate-400"}`}>Interface language</label>
                   <select 
                     value={form.language || 'English (US)'}
                     onChange={(e) => handleInputChange('language', e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-700 outline-none focus:border-emerald-500 transition-colors"
+                    className={`w-full border rounded-xl px-4 py-3.5 text-sm outline-none transition-all appearance-none cursor-pointer
+                      ${DarkMode ? "bg-slate-800/50 border-slate-700 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-700"}`}
                   >
                     <option>English (US)</option>
                     <option>Amharic (Ethiopia)</option>
                   </select>
                 </div>
                 <ToggleRow 
-                    label="Auto-detect Timezone" 
+                    label="Auto-detect timezone" 
                     active={form.autoTimezone || false}
                     onClick={() => handleInputChange('autoTimezone', !form.autoTimezone)}
                 />
               </SettingCard>
 
               {/* SECURITY OPTIONS */}
-              <SettingCard title="Security Options" icon={Globe} colorClass="border-rose-100 bg-white">
+              <SettingCard title="Security options" icon={ShieldCheck} colorClass={DarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-rose-50"}>
                 <ToggleRow 
-                    label="Two-Factor Authentication" 
+                    label="Two-factor authentication" 
                     active={form.twoFactor || false}
                     onClick={() => handleInputChange('twoFactor', !form.twoFactor)}
                 />
                 <ToggleRow 
-                    label="Maintenance Mode" 
+                    label="Maintenance mode" 
                     active={form.maintenanceMode || false}
                     onClick={() => handleInputChange('maintenanceMode', !form.maintenanceMode)}
                 />
@@ -152,15 +165,16 @@ const SystemSettings = () => {
 
             </div>
 
-            {/* GLOBAL SAVE ACTION */}
+            {/* Global Save Action */}
             <div className="flex justify-center">
               <button 
                 onClick={handleGlobalSave}
                 disabled={isSaving}
-                className="w-full max-w-md py-5 bg-textColor rounded-[2rem] text-white font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-xl shadow-emerald-200  hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                className={`w-full max-w-md py-5 rounded-[2rem] text-white font-black capitalize tracking-widest flex items-center justify-center gap-3 shadow-xl transition-all active:scale-95 disabled:opacity-50
+                  ${DarkMode ? "bg-primBtn shadow-primBtn/20" : "bg-textColor shadow-textColor/20"}`}
               >
                 {isSaving ? <Loader2 className="animate-spin" /> : <Save size={20} />}
-                {isSaving ? "Synchronizing..." : "Save All Changes"}
+                {isSaving ? "Synchronizing data..." : "Save all changes"}
               </button>
             </div>
 

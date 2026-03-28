@@ -11,7 +11,7 @@ import Sidebar from '../../../Component/AuthenticateComponent/OfficerComponet/Da
 import AuthHeader from '../../../Component/AuthenticateComponent/AuthHeader';
 import UserForm from '../../../Component/AuthenticateComponent/UserManagementPageComponent/UserForm';
 import UserTable from '../../../Component/AuthenticateComponent/UserManagementPageComponent/UserTable';
-import { Loader2, Plus, X } from 'lucide-react';
+import { Loader2, Plus, X, Users2 } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../../Redux/auth';
 
@@ -19,6 +19,7 @@ const UserManagementPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user: currentUser } = useSelector((state) => state.auth);
+  const { DarkMode } = useSelector((state) => state.webState || {});
   const isAdmin = currentUser?.role === 'ADMIN';
 
   const [editingUser, setEditingUser] = useState(null);
@@ -38,12 +39,10 @@ const UserManagementPage = () => {
     }
   }, [error, dispatch, navigate]);
 
-  /* ===================== FILTER CURRENT USER ===================== */
   const filteredUsers = Array.isArray(users)
     ? users.filter(u => u.id !== currentUser?.id && u._id !== currentUser?.id)
     : [];
 
-  /* ===================== SAVE USER ===================== */
   const handleSave = async (payload) => {
     const toastId = toast.loading(editingUser ? 'Updating staff...' : 'Registering staff...');
     try {
@@ -57,12 +56,10 @@ const UserManagementPage = () => {
       setEditingUser(null);
       setShowUserForm(false);
     } catch (err) {
-      console.log(err)
       toast.error(err?.data?.message || 'Failed to save staff', { id: toastId });
     }
   };
 
-  /* ===================== DELETE USER ===================== */
   const handleDelete = async (id) => {
     const toastId = toast.loading('Deleting staff...');
     try {
@@ -78,75 +75,103 @@ const UserManagementPage = () => {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-white text-slate-800">
-      <Toaster position="top-right" />
+    <div className={`flex min-h-screen transition-colors duration-300 ${DarkMode ? "bg-slate-950 text-slate-100" : "bg-white text-slate-800"}`}>
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          style: {
+            borderRadius: '1.5rem',
+            background: DarkMode ? '#1e293b' : '#fff',
+            color: DarkMode ? '#fff' : '#333',
+            border: DarkMode ? '1px solid #334155' : '1px solid #f1f5f9'
+          }
+        }} 
+      />
 
-      {/* ===================== SIDEBAR ===================== */}
       <Sidebar role={currentUser?.role} />
 
       <div className="flex-1 flex flex-col min-w-0">
         <AuthHeader True />
 
-        <main className="flex-1 pt-20 px-6 lg:px-10 pb-20 bg-slate-50/50">
-          <div className="max-w-5xl mx-auto flex flex-col gap-10">
-
-            {/* HEADER */}
-            <header className="text-left">
-              <h1 className="text-2xl relative top-10 font-black capitalize">
-                Staff <span className="text-textColor">Directory</span>
-              </h1>
-            </header>
-
-            <div className={`relative ${(!isAdmin && isLoading )  && "top-15"} ${(!isAdmin )  && "top-10"} ${ isLoading &&("space-y-20 max-sm:space-y-20  ")} max-sm:space-y-4 md:bottom-10 `}>
-
-              {/* REGISTER BUTTON */}
-              {isAdmin && (
-                <div className={`flex  justify-end`}>
-                  <button
-                    onClick={() => { setEditingUser(null); setShowUserForm(true); }}
-                    className="flex items-center gap-2 px-6 py-3 bg-primBtn text-white font-black rounded-full hover:bg-primBtn transition"
-                  >
-                    <Plus size={16} /> Register Staff
-                  </button>
+        <main className={`flex-1 pt-24 px-6 lg:px-10 pb-20 transition-colors duration-300 ${DarkMode ? "bg-slate-950" : "bg-slate-50/50"}`}>
+          <div className="max-w-6xl mx-auto">
+            
+            {/* SaaS HEADER SECTION */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+              <header className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-xl ${DarkMode ? "bg-primBtn/10 text-primBtn" : "bg-primBtn/5 text-primBtn"}`}>
+                    <Users2 size={24} />
+                  </div>
+                  <h1 className="text-3xl font-black tracking-tight capitalize">
+                    Staff <span className="text-textColor">directory</span>
+                  </h1>
                 </div>
-              )}
+                <p className={`text-sm font-medium capitalize ${DarkMode ? "text-slate-400" : "text-slate-500"}`}>
+                  Manage organization members, roles, and access permissions
+                </p>
+              </header>
 
-              {/* TABLE */}
+              {isAdmin && (
+                <button
+                  onClick={() => { setEditingUser(null); setShowUserForm(true); }}
+                  className="flex items-center justify-center gap-2 px-8 py-4 bg-primBtn text-white font-black rounded-2xl hover:opacity-90 shadow-xl shadow-primBtn/20 transition-all active:scale-95 capitalize"
+                >
+                  <Plus size={20} strokeWidth={3} /> Register staff
+                </button>
+              )}
+            </div>
+
+            {/* CONTENT AREA */}
+            <div className="relative">
               {isLoading ? (
-                <div className="flex flex-col items-center relative bottom-10 py-20 bg-white rounded-3xl border">
-                  <Loader2 className="animate-spin text-textColor mb-3" size={40} />
-                  <span className="text-[10px] font-black capitalize tracking-widest text-slate-400">
-                    Loading staff...
+                <div className={`flex flex-col items-center justify-center py-32 rounded-[3rem] border-2 border-dashed transition-all
+                  ${DarkMode ? "bg-slate-900/50 border-slate-800" : "bg-white border-slate-100"}`}>
+                  <Loader2 className="animate-spin text-primBtn mb-4" size={48} />
+                  <span className={`text-sm font-black capitalize tracking-widest ${DarkMode ? "text-slate-500" : "text-slate-400"}`}>
+                  Loading staff data...
                   </span>
                 </div>
               ) : (
-                <UserTable
-                  users={filteredUsers}
-                  onEdit={(u) => { setEditingUser(u); setShowUserForm(true); }}
-                  onDelete={handleDelete}
-                  isAdmin={isAdmin}
-                />
+                <div className={`rounded-[2.5rem] overflow-hidden border transition-all
+                  ${DarkMode ? "bg-slate-900 border-slate-800 shadow-2xl shadow-black/50" : "bg-white border-slate-100 shadow-xl shadow-slate-200/50"}`}>
+                  <UserTable
+                    users={filteredUsers}
+                    onEdit={(u) => { setEditingUser(u); setShowUserForm(true); }}
+                    onDelete={handleDelete}
+                    isAdmin={isAdmin}
+                  />
+                </div>
               )}
             </div>
           </div>
         </main>
       </div>
 
-      {/* ===================== MODAL (UserForm like CategoryForm) ===================== */}
+      {/* ===================== SaaS MODAL ===================== */}
       {showUserForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-2xl mx-4 bg-white rounded-[3rem] p-4 shadow-2xl">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300"
+            onClick={() => { setShowUserForm(false); setEditingUser(null); }}
+          />
+          
+          <div className={`relative w-full max-w-2xl transform animate-in zoom-in-95 duration-300 rounded-[3rem] p-2 shadow-2xl
+            ${DarkMode ? "bg-slate-900 border border-slate-800" : "bg-white border border-slate-100"}`}>
             
-            {/* CLOSE BUTTON */}
-            <button
-              onClick={() => { setShowUserForm(false); setEditingUser(null); }}
-              className="absolute top-6 right-6 p-2 rounded-full bg-slate-100 hover:bg-slate-200"
-            >
-              <X size={18} />
-            </button>
+            {/* Header / Close */}
+            <div className="absolute top-8 right-8 z-10">
+              <button
+                onClick={() => { setShowUserForm(false); setEditingUser(null); }}
+                className={`p-2.5 rounded-2xl transition-all hover:rotate-90 
+                  ${DarkMode ? "bg-slate-800 text-slate-400 hover:text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+              >
+                <X size={20} strokeWidth={3} />
+              </button>
+            </div>
 
-            {/* UserForm */}
-            <div className="overflow-y-auto max-h-[80vh]">
+            <div className="overflow-y-auto max-h-[85vh] custom-scrollbar px-6 py-8">
               <UserForm
                 editingUser={editingUser}
                 onSave={handleSave}

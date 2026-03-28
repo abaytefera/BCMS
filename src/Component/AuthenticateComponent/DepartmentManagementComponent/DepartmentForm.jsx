@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, ChevronDown } from 'lucide-react';
+import { X, ChevronDown, Building2, UserCheck, Send } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
 const DepartmentForm = ({
   editingDept,
@@ -8,6 +9,8 @@ const DepartmentForm = ({
   user = [],
   isSaving
 }) => {
+  const { DarkMode } = useSelector((state) => state.webState || {});
+  
   const [formData, setFormData] = useState({
     name: '',
     supervisor: '',
@@ -46,100 +49,115 @@ const DepartmentForm = ({
     }
   };
 
+  // Theme Constants
+  const cardBg = DarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200';
+  const labelText = DarkMode ? 'text-slate-500' : 'text-slate-400';
+  const inputBg = DarkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900';
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-2xl relative max-w-xl mx-auto"
+      className={`relative w-full max-w-xl mx-auto p-10 border rounded-[3rem] shadow-2xl transition-all duration-300 ${cardBg}`}
     >
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-black text-slate-900 uppercase">
-          {editingDept ? 'Update Department' : 'New Department'}
-        </h2>
+      <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center gap-3">
+          <div className={`p-2.5 rounded-xl ${DarkMode ? 'bg-primBtn/10 text-primBtn' : 'bg-primBtn/5 text-primBtn'}`}>
+            <Building2 size={22} />
+          </div>
+          <h2 className={`text-2xl font-black capitalize tracking-tight ${DarkMode ? 'text-primBtn' : 'text-primBtn'}`}>
+            {editingDept ? 'Update department' : 'New department'}
+          </h2>
+        </div>
 
         <button
           type="button"
           onClick={onCancel}
-          className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+          className={`p-2 rounded-full transition-all ${DarkMode ? 'hover:bg-slate-800 text-slate-500' : 'hover:bg-slate-100 text-slate-400'}`}
         >
-          <X size={20} className="text-slate-400 hover:text-rose-500" />
+          <X size={20} className="hover:text-rose-500 transition-colors" />
         </button>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* DEPARTMENT NAME */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
-            Department Name
+        <div className="space-y-2.5">
+          <label className={`text-[11px] font-black capitalize tracking-wider ml-1 ${labelText}`}>
+            Department name
           </label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData({ ...formData, name: e.target.value })
-            }
-            className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-slate-900 font-semibold outline-none focus:border-emerald-500 focus:ring-emerald-500/10 transition-all"
-            placeholder="e.g. Environmental Quality Control"
-            required
-          />
+          <div className="relative group">
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className={`w-full border rounded-2xl p-4 pl-5 text-sm font-semibold outline-none transition-all duration-300 
+                ${inputBg} focus:border-primBtn focus:ring-4 focus:ring-primBtn/5`}
+              placeholder="e.g. Environmental quality control"
+              required
+            />
+          </div>
         </div>
 
         {/* SUPERVISOR SELECT */}
-        <div className="space-y-2 relative">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
-            Assigned Supervisor
+        <div className="space-y-2.5 relative">
+          <label className={`text-[11px] font-black capitalize tracking-wider ml-1 ${labelText}`}>
+            Assigned supervisor
           </label>
 
-          <div className="relative">
+          <div className="relative group">
             <select
               value={formData.supervisor}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  supervisor: e.target.value
-                })
-              }
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-slate-900 font-semibold outline-none focus:border-emerald-500 transition-all appearance-none cursor-pointer pr-12"
+              onChange={(e) => setFormData({ ...formData, supervisor: e.target.value })}
+              className={`w-full border rounded-2xl p-4 pl-5 text-sm font-semibold outline-none transition-all duration-300 appearance-none cursor-pointer pr-12
+                ${inputBg} focus:border-primBtn focus:ring-4 focus:ring-primBtn/5`}
               required
             >
-              <option value="">Select a Supervisor</option>
+              <option value="" className={DarkMode ? 'bg-slate-900' : 'bg-white'}>Select a supervisor</option>
 
               {Array.isArray(user) &&
                 user
-                  .filter(
-                    (u) =>
-                      u.role &&
-                      u.role.toUpperCase() === 'SUPERVISOR'
-                  )
+                  .filter((u) => u.role && u.role.toLowerCase() === 'supervisor')
                   .map((u) => (
-                    <option key={u.id} value={String(u.id)}>
+                    <option 
+                      key={u.id} 
+                      value={String(u.id)}
+                      className={DarkMode ? 'bg-slate-900' : 'bg-white'}
+                    >
                       {u.full_name || u.username}
                     </option>
                   ))}
             </select>
 
             <ChevronDown
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors group-focus-within:text-primBtn ${DarkMode ? 'text-slate-600' : 'text-slate-400'}`}
               size={18}
             />
           </div>
         </div>
 
-        {/* SUBMIT */}
-        <button
-          type="submit"
-          disabled={isSaving}
-          className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-white transition-all transform active:scale-[0.98]
-            bg-textColor shadow-lg shadow-emerald-200 
-            ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}
-          `}
-        >
-          {isSaving
-            ? 'Processing...'
-            : editingDept
-            ? 'Save'
-            : 'Register'}
-        </button>
+        {/* SUBMIT BUTTON */}
+        <div className="pt-4">
+          <button
+            type="submit"
+            disabled={isSaving}
+            className={`w-full py-5 rounded-[2rem] font-black capitalize tracking-widest text-sm text-white transition-all transform active:scale-[0.97] flex items-center justify-center gap-3
+              ${DarkMode ? 'bg-primBtn shadow-xl shadow-primBtn/20' : 'bg-textColor shadow-xl shadow-emerald-100'}
+              ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}
+            `}
+          >
+            {isSaving ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Processing...
+              </span>
+            ) : (
+              <>
+               
+                {editingDept ? 'Update' : 'Register '}
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </form>
   );

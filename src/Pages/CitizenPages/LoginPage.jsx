@@ -1,158 +1,157 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { Mail, Lock, Leaf, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Loader2, CheckCircle, AlertCircle, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { LoginUser } from '../../Redux/auth'; 
+import { ToggleDarkMode } from "../../Redux/WebState"; // Updated Import
 
 import LoginBg from '../../Component/CitizenComponent/LoginPageComponent/LoginBg';
 import AuthInput from '../../Component/CitizenComponent/LoginPageComponent/AuthInput';
-
 
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const {user, isloading, error } = useSelector((state) => state.auth);
-  const { Language } = useSelector((state) => state.webState);
+  const { user, isloading, error } = useSelector((state) => state.auth);
+  const { Language, DarkMode } = useSelector((state) => state.webState);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  
-  // 1. Dispatch the action and capture the result
-  const resultAction = await dispatch(LoginUser({ username: email, password }));
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const resultAction = await dispatch(LoginUser({ username: email, password }));
 
-  // 2. LOG THE ERROR HERE
-  if (LoginUser.rejected.match(resultAction)) {
-    console.log("Login Failed Error:", resultAction.payload || resultAction.error);
-  }
-
-  if (LoginUser.fulfilled.match(resultAction)) {
-    console.log("Login Success Data:", resultAction.payload);
-    localStorage.setItem('authToken', resultAction.payload.token);
-    setShowSuccess(true);
-    setTimeout(() => {
-      navigate('/Dashboard');
-    }, 300);
-  }
-};
-
-  useEffect(()=>{
-
-    if(user){
-
-      navigate('/Dashboard');
+    if (LoginUser.fulfilled.match(resultAction)) {
+      localStorage.setItem('authToken', resultAction.payload.token);
+      setShowSuccess(true);
+      setTimeout(() => {
+        navigate('/Dashboard');
+      }, 800);
     }
-  },[user])
+  };
 
   useEffect(() => {
+    if (user) navigate('/Dashboard');
     window.scrollTo(0, 0);
-  }, []);
+  }, [user]);
 
   const t = {
-    title: Language === "AMH" ? "ግባ" : "Login ",
+    title: Language === "AMH" ? "ግባ" : "Login",
     userLabel: Language === "AMH" ? "ኢሜይል ወይም መለያ ስም" : "Email / Username",
     passLabel: Language === "AMH" ? "የይለፍ ቃል" : "Password",
     loginBtn: Language === "AMH" ? "ግባ" : "Login",
-    forgotPass: Language === "AMH" ? "የይለፍ ቃል ረስተዋል?" : "Forgot Password?",
     successMsg: Language === "AMH" ? "ተሳክቷል!" : "Success!",
   };
 
   return (
-    <div className="bg-white min-h-screen font-sans">
-
+    <div className={`min-h-screen font-sans transition-all duration-700 ease-in-out ${DarkMode ? "bg-slate-950 text-slate-100" : "bg-white text-slate-900"}`}>
       
-      {/* 300ms Clean White Success Overlay */}
+      {/* Professional SaaS Theme Toggle */}
+      <div className="fixed top-8 right-8 z-50">
+        <button 
+          onClick={() => dispatch(ToggleDarkMode())}
+          className={`group flex items-center gap-3 p-1.5 pr-4 rounded-full border-2 transition-all duration-300 active:scale-95 ${
+            DarkMode 
+              ? "bg-slate-900 border-slate-800 text-amber-400 hover:border-amber-400/30" 
+              : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300"
+          }`}
+        >
+          <div className={`p-2 rounded-full transition-all duration-500 ${DarkMode ? "bg-slate-800 rotate-[360deg]" : "bg-white shadow-sm"}`}>
+            {DarkMode ? <Sun size={18} strokeWidth={2.5} /> : <Moon size={18} strokeWidth={2.5} />}
+          </div>
+          <span className={`text-[11px] font-bold capitalize tracking-tight ${DarkMode ? "text-slate-400" : "text-slate-500"}`}>
+            {DarkMode ? "light mode" : "dark mode"}
+          </span>
+        </button>
+      </div>
+
+      {/* Success Overlay */}
       {showSuccess && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white animate-in fade-in zoom-in duration-300">
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center animate-in fade-in zoom-in duration-500 ${DarkMode ? "bg-slate-950/90 backdrop-blur-md" : "bg-white"}`}>
           <div className="flex flex-col items-center">
-            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-4">
-               <CheckCircle size={48} className="text-emerald-500 animate-bounce" />
+            <div className={`w-24 h-24 rounded-[2.5rem] flex items-center justify-center mb-6 shadow-2xl ${DarkMode ? "bg-emerald-500/10 shadow-emerald-500/5" : "bg-emerald-50"}`}>
+               <CheckCircle size={56} className="text-emerald-500 animate-bounce" />
             </div>
-            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">{t.successMsg}</h2>
+            <h2 className="text-3xl font-black capitalize tracking-tight">{t.successMsg.toLowerCase()}</h2>
           </div>
         </div>
       )}
 
-      <div className="min-h-screen pt-24 flex items-center justify-center px-6 relative">
-        <div className="absolute inset-0 opacity-30 pointer-events-none">
+      <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden">
+        <div className={`absolute inset-0 transition-opacity duration-1000 ${DarkMode ? "opacity-5" : "opacity-25"}`}>
            <LoginBg />
         </div>
 
-        <div className={`w-full max-w-md bg-white border border-gray-100 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 p-10 flex flex-col items-center z-10 transition-all duration-300 ${showSuccess ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}`}>
-          
-         <div className='flex flex-col'>
-          <img src="/logo1.jpg" alt="" className='w-40 h-auto' />
-          
+        <div className={`w-full max-w-md p-10 rounded-[3rem] border-2 transition-all duration-500 z-10 
+          ${DarkMode 
+            ? "bg-slate-900/40 border-slate-800 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.5)] backdrop-blur-2xl" 
+            : "bg-white border-slate-100 shadow-[0_32px_100px_-20px_rgba(0,0,0,0.08)]"
+          } 
+          ${showSuccess ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}`}
+        >
+          {/* Logo & Header */}
+          <div className="flex flex-col items-center mb-10">
+            <div className={`p-5 rounded-[2.5rem] mb-6 transition-all duration-500 ${DarkMode ? "bg-white shadow-[0_0_40px_rgba(255,255,255,0.1)]" : "bg-slate-50"}`}>
+              <img src="/logo1.jpg" alt="Logo" className="w-28 h-auto" />
+            </div>
+            <h1 className="text-2xl font-black capitalize tracking-tight">Welcome back</h1>
+            <p className={`text-sm mt-1 font-medium ${DarkMode ? "text-slate-500" : "text-slate-400"}`}>Please enter your details</p>
           </div>
-          <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-8">
-           
-          </p>
 
-          <form onSubmit={handleLogin} className="w-full  h-80">
+          <form onSubmit={handleLogin} className="w-full space-y-5">
             {/* Error Message */}
             {error && (
-              <div className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
-                <AlertCircle className="text-rose-500 shrink-0" size={18} />
-                <p className="text-rose-700 text-[11px] font-bold uppercase tracking-wide">
-                  {error}
-                </p>
+              <div className={`p-4 rounded-2xl border flex items-center gap-3 animate-in slide-in-from-top-4 ${
+                DarkMode ? "bg-rose-500/5 border-rose-500/20 text-rose-400" : "bg-rose-50 border-rose-100 text-rose-600"
+              }`}>
+                <AlertCircle size={18} strokeWidth={2.5} />
+                <p className="text-[12px] font-bold capitalize">{error.toLowerCase()}</p>
               </div>
             )}
 
             <div className="space-y-4">
-                <AuthInput 
-                  icon={Mail} 
-                  type="text" 
-                  placeholder={t.userLabel} 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                />
-                
-                <AuthInput 
-                  icon={Lock} 
-                  type="password" 
-                  placeholder={t.passLabel} 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)} 
-                />
+              <AuthInput 
+                icon={Mail} 
+                type="text" 
+                placeholder={t.userLabel} 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                className={DarkMode ? "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600" : ""}
+              />
+              
+              <AuthInput 
+                icon={Lock} 
+                type="password" 
+                placeholder={t.passLabel} 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                className={DarkMode ? "bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600" : ""}
+              />
             </div>
 
-          <button
-  type="submit"
-  disabled={isloading || showSuccess}
-  className="group relative w-full mt-10 overflow-hidden rounded-2xl 
-             bg-primBtn p-4 transition-all
-             hover:brightness-110 active:scale-95
-             disabled:opacity-50
-             shadow-2xl shadow-[#73C2FB]/60"
->
-  <div className="relative flex items-center justify-center gap-3">
-    {isloading ? (
-      <Loader2 className="animate-spin text-white" size={22} />
-    ) : (
-      <span className="text-sm font-extrabold uppercase tracking-[0.25em] text-white">
-        {t.loginBtn}
-      </span>
-    )}
-  </div>
-
-  {/* Strong shine effect */}
-  <div className="absolute inset-0 -translate-x-full 
-                  bg-gradient-to-r 
-                  from-transparent via-white/40 to-transparent 
-                  transition-transform duration-500 group-hover:translate-x-full" />
-</button>
-           
+            <button
+              type="submit"
+              disabled={isloading || showSuccess}
+              className={`group relative w-full mt-6 py-4.5 rounded-[1.25rem] bg-primBtn transition-all duration-300 active:scale-[0.97] disabled:opacity-50 shadow-2xl ${
+                DarkMode ? "shadow-primBtn/20 hover:shadow-primBtn/40" : "shadow-blue-200 hover:shadow-blue-300"
+              }`}
+            >
+              <div className="relative flex items-center justify-center gap-3">
+                {isloading ? (
+                  <Loader2 className="animate-spin text-white" size={22} />
+                ) : (
+                  <span className="text-[16px] font-black capitalize tracking-wide text-white">
+                    {t.loginBtn.toLowerCase()}
+                  </span>
+                )}
+              </div>
+         
+            </button>
           </form>
-
-          
         </div>
       </div>
-  
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Activity,
   ShieldCheck,
@@ -7,11 +9,10 @@ import {
   Calendar,
   AlertTriangle,
   CheckCircle,
-  MapPin, // New Icon
-  Layers3  // New Icon
+  MapPin,
+  Layers3,
+  TrendingUp
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import {
   RadialBarChart,
   RadialBar,
@@ -40,6 +41,7 @@ import DepartmentCircularChart from "../../../Component/AuthenticateComponent/Ad
 import StatCard from "./StatCard";
 
 const ManagementDashboard = () => {
+  const { DarkMode } = useSelector((state) => state.webState || {});
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -71,9 +73,7 @@ const ManagementDashboard = () => {
   const topCategory = managementState?.topCategories?.[0]?.category ?? "N/A";
   const topSubCity = managementState?.subCityBreakdown?.[0]?.sub_city ?? "N/A";
 
-  /* --- Data Prep for Radial Chart (Categories) --- */
-  // RadialBarChart requires an 'fill' property on each data object for distinct colors
-  const RADIAL_COLORS = ['#818cf8', '#a78bfa', '#e879f9', '#fb7185', '#fb923c'];
+  const RADIAL_COLORS = ['#6366f1', '#8b5cf6', '#d946ef', '#f43f5e', '#f59e0b'];
   const formattedRadialData = managementState?.topCategories?.map((item, index) => ({
     ...item,
     fill: RADIAL_COLORS[index % RADIAL_COLORS.length]
@@ -81,110 +81,125 @@ const ManagementDashboard = () => {
 
   /* ================= DASHBOARD CARDS ================= */
   const cards = [
-    { title: "Total Complaints", value: totalComplaints, icon: Activity, gradient: "bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500", onClick: () => navigate("/Complaintlist/admin/list/") },
-    { title: "Scheduled Today", value: managementState?.scheduledToday ?? 0, icon: Calendar, gradient: "bg-gradient-to-br from-purple-400 via-purple-500 to-indigo-500", onClick: () => navigate("/secretary/list/timeframe/today") },
-    { title: "Scheduled This Week", value: managementState?.scheduledThisWeek ?? 0, icon: Calendar, gradient: "bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-500", onClick: () => navigate("/secretary/list/timeframe/week") },
-    { title: "Completed This Month", value: managementState?.completedThisMonth ?? 0, icon: CheckCircle, gradient: "bg-gradient-to-br from-green-400 via-green-500 to-emerald-500", onClick: () => navigate("/secretary/list/stat/completed") },
-    { title: "Escalated Complaints", value: managementState?.escalatedComplaints ?? 0, icon: AlertTriangle, gradient: "bg-gradient-to-br from-red-400 via-red-500 to-rose-500", onClick: () => navigate("/secretary/list/stat/completed") },
-    { title: "SLA Compliance", value: slaCompliance, icon: ShieldCheck, gradient: "bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-500" },
-    { title: "User Satisfaction", value: `${userSatisfaction}/5`, icon: Heart, gradient: "bg-gradient-to-br from-rose-400 via-rose-500 to-pink-500" }
+    { title: "Total complaints", value: totalComplaints, icon: Activity, gradient: "bg-gradient-to-br from-blue-500 to-indigo-600", onClick: () => navigate("/Complaintlist/admin/list/") },
+    { title: "Scheduled today", value: managementState?.scheduledToday ?? 0, icon: Calendar, gradient: "bg-gradient-to-br from-violet-500 to-purple-600", onClick: () => navigate("/secretary/list/timeframe/today") },
+    { title: "SLA compliance", value: slaCompliance, icon: ShieldCheck, gradient: "bg-gradient-to-br from-emerald-500 to-teal-600" },
+    { title: "User satisfaction", value: `${userSatisfaction}/5`, icon: Heart, gradient: "bg-gradient-to-br from-rose-500 to-pink-600" }
   ];
 
   const resolutionData = [
-    { name: "Resolved", value: resolvedComplaints, colorStart: "#34d399", colorEnd: "#10b981" },
-    { name: "Unresolved", value: unresolvedComplaints, colorStart: "#f87171", colorEnd: "#ef4444" },
-    { name: "Pending", value: managementState?.pendingRequests ?? 0, colorStart: "#facc15", colorEnd: "#f59e0b" }
+    { name: "Resolved", value: resolvedComplaints, colorStart: "#10b981", colorEnd: "#059669" },
+    { name: "Unresolved", value: unresolvedComplaints, colorStart: "#ef4444", colorEnd: "#dc2626" },
+    { name: "Pending", value: managementState?.pendingRequests ?? 0, colorStart: "#f59e0b", colorEnd: "#d97706" }
   ];
 
-  /* ================= CUSTOM TOOLTIP ================= */
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-slate-950 text-white p-4 rounded-2xl shadow-xl border border-slate-800">
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{payload[0].name}</p>
-          <p className="text-2xl font-black">{payload[0].value}</p>
-          <p className="text-[10px] text-slate-500">Complaints Registered</p>
+        <div className={`p-4 rounded-2xl shadow-2xl border ${DarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'}`}>
+          <p className={`text-[10px] font-black capitalize tracking-widest mb-1 ${DarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{payload[0].name}</p>
+          <p className={`text-2xl font-black ${DarkMode ? 'text-white' : 'text-slate-900'}`}>{payload[0].value}</p>
+          <p className="text-[10px] font-bold text-primBtn capitalize">Complaints registered</p>
         </div>
       );
     }
     return null;
   };
 
-  /* ================= LOADING ================= */
   if (complaintsLoading || stateLoading || chartsLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="animate-spin text-blue-600" size={48} />
+      <div className={`min-h-screen flex items-center justify-center ${DarkMode ? 'bg-slate-950' : 'bg-white'}`}>
+        <Loader2 className="animate-spin text-primBtn" size={48} strokeWidth={2.5} />
       </div>
     );
   }
 
+  // Common Section Styling
+  const sectionClass = `border transition-all duration-300 p-8 rounded-[2.5rem] shadow-sm ${
+    DarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+  }`;
+
+  const headerLabel = `text-[11px] font-black capitalize tracking-[0.15em] mb-2 ${
+    DarkMode ? 'text-slate-500' : 'text-slate-400'
+  }`;
+
   return (
-    <div className="flex min-h-screen bg-white text-slate-900">
+    <div className={`flex min-h-screen transition-colors duration-300 ${DarkMode ? 'bg-slate-950' : 'bg-white'}`}>
       <Sidebar role="manager" />
       <div className="flex-1 flex flex-col min-w-0">
         <AuthHeader True={true} />
-        <main className="flex-1 pb-40 pt-32 px-6 lg:px-10 overflow-y-auto bg-slate-50/50">
-          <div className="max-w-7xl mx-auto space-y-10">
+        
+        <main className={`flex-1 pb-40 pt-32 px-6 lg:px-10 overflow-y-auto transition-colors duration-300 ${DarkMode ? 'bg-slate-950' : 'bg-slate-50/50'}`}>
+          <div className="max-w-7xl mx-auto space-y-8">
             
+            {/* PAGE TITLE */}
+            <div className="flex flex-col gap-1">
+              <h1 className={`text-3xl font-black capitalize tracking-tight ${DarkMode ? 'text-white' : 'text-slate-900'}`}>
+                Executive <span className="text-primBtn">dashboard</span>
+              </h1>
+              <p className={`text-sm font-medium ${DarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                Real-time management overview and analytics
+              </p>
+            </div>
+
             {/* STAT CARDS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {cards.map((card, i) => (
-                <StatCard key={i} {...card} wave={i % 2 === 0 ? "up" : "down"} delay={i * 0.2} />
+                <StatCard key={i} {...card} wave={i % 2 === 0 ? "up" : "down"} delay={i * 0.1} />
               ))}
             </div>
 
             {/* TREND + PIE */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 bg-white border border-slate-200 p-8 rounded-[3rem] shadow-sm">
-                <h3 className="text-xs font-black uppercase tracking-widest mb-2">Complaint Trends</h3>
-                <p className="text-[10px] text-slate-400 font-bold uppercase mb-6">Avg Resolution Time: {managementState?.averageResolutionTime} Days</p>
-                <TrendChart data={charts?.trends} />
+              <div className={`${sectionClass} lg:col-span-2`}>
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h3 className={headerLabel}>Complaint trends</h3>
+                    <div className="flex items-center gap-2">
+                      <TrendingUp size={16} className="text-emerald-500" />
+                      <p className={`text-sm font-bold ${DarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                        Avg resolution: {managementState?.averageResolutionTime} days
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="h-[320px]">
+                  <TrendChart data={charts?.trends} isDark={DarkMode} />
+                </div>
               </div>
-              <div className="bg-white border border-slate-200 p-8 rounded-[3rem] shadow-sm">
-                <h3 className="text-xs font-black uppercase tracking-widest mb-6">Resolution Status</h3>
-                <div className="h-[300px]">
-                  <ResolutionPie data={resolutionData} />
+
+              <div className={sectionClass}>
+                <h3 className={headerLabel}>Resolution status</h3>
+                <div className="h-[320px] mt-4">
+                  <ResolutionPie data={resolutionData} isDark={DarkMode} />
                 </div>
               </div>
             </div>
 
-            {/* NEW VISUALIZATIONS: RADIAL & GRADIENT AREA */}
+            {/* RADIAL & GRADIENT AREA */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              
-              {/* BEAUTIFUL GRAPH 1: RADIAL BAR (CATEGORIES) */}
-              <div className="bg-white border border-slate-200 p-8 rounded-[3rem] shadow-sm flex flex-col">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
-                    <Layers3 size={20} />
+              <div className={sectionClass}>
+                <div className="flex items-center gap-4 mb-10">
+                  <div className={`p-3 rounded-2xl ${DarkMode ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
+                    <Layers3 size={22} />
                   </div>
-                  <h3 className="text-xs font-black uppercase tracking-widest">Category Distribution</h3>
+                  <h3 className={headerLabel}>Category distribution</h3>
                 </div>
-                <div className="h-[350px] w-full flex-1">
+                <div className="h-[380px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadialBarChart 
-                      cx="50%" 
-                      cy="50%" 
-                      innerRadius="20%" 
-                      outerRadius="100%" 
-                      barSize={15} 
-                      data={formattedRadialData}
-                      startAngle={180} // Starts from bottom left
-                      endAngle={-180}   // Creates full circular flow
+                      cx="50%" cy="50%" innerRadius="25%" outerRadius="100%" barSize={14} 
+                      data={formattedRadialData} startAngle={180} endAngle={-180}
                     >
                       <RadialBar
                         minAngle={15}
-                        background={{ fill: '#f1f5f9' }} // Light gray background track
-                        clockWise
-                        dataKey="count"
-                        cornerRadius={10} // Rounded edges on bars
+                        background={{ fill: DarkMode ? '#1e293b' : '#f8fafc' }}
+                        clockWise dataKey="count" cornerRadius={12}
                       />
                       <Legend 
-                        iconSize={10} 
-                        layout="horizontal" 
-                        verticalAlign="bottom" 
-                        wrapperStyle={{ fontSize: '11px', fontWeight: 600, paddingLeft: '10px' }}
-                        formatter={(value, entry)=> entry.payload.category} // Use category name in legend
+                        iconSize={8} layout="horizontal" verticalAlign="bottom" 
+                        wrapperStyle={{ fontSize: '11px', fontWeight: 800, textTransform: 'capitalize', paddingTop: '20px' }}
+                        formatter={(value, entry)=> entry.payload.category}
                       />
                       <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }}/>
                     </RadialBarChart>
@@ -192,65 +207,46 @@ const ManagementDashboard = () => {
                 </div>
               </div>
 
-              {/* BEAUTIFUL GRAPH 2: SMOOTH GRADIENT AREA (SUB-CITIES) */}
-              <div className="bg-white border border-slate-200 p-8 rounded-[3rem] shadow-sm">
-                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-sky-50 text-sky-600 rounded-2xl">
-                    <MapPin size={20} />
+              <div className={sectionClass}>
+                <div className="flex items-center gap-4 mb-10">
+                  <div className={`p-3 rounded-2xl ${DarkMode ? 'bg-sky-500/10 text-sky-400' : 'bg-sky-50 text-sky-600'}`}>
+                    <MapPin size={22} />
                   </div>
-                  <h3 className="text-xs font-black uppercase tracking-widest">Sub-City Volume Flow</h3>
+                  <h3 className={headerLabel}>Sub-city volume flow</h3>
                 </div>
-                <div className="h-[350px] w-full">
+                <div className="h-[380px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart 
-                      data={managementState?.subCityBreakdown} 
-                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                    >
-                      {/* Define the gradient definition here */}
+                    <AreaChart data={managementState?.subCityBreakdown} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                       <defs>
                         <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.4}/> {/* Rich Sky Blue */}
-                          <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>  {/* Fades to transparent */}
+                          <stop offset="5%" stopColor="#0ea5e9" stopOpacity={DarkMode ? 0.3 : 0.5}/>
+                          <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={DarkMode ? "#1e293b" : "#f1f5f9"} />
                       <XAxis 
-                        dataKey="sub_city" 
-                        axisLine={false} 
-                        tickLine={false} 
-                        tick={{ fontSize: 11, fontWeight: 700, fill: '#64748b' }} 
+                        dataKey="sub_city" axisLine={false} tickLine={false} 
+                        tick={{ fontSize: 10, fontWeight: 700, fill: DarkMode ? '#64748b' : '#94a3b8', capitalize: true }} 
                       />
-                      <YAxis hide /> {/* Hiding Y axis is a common UX pattern for "beauty" graphs */}
+                      <YAxis hide />
                       <Tooltip content={<CustomTooltip />} />
                       <Area 
-                        type="monotone" // This makes the lines SMOOTH, not jagged
-                        dataKey="count" 
-                        name="Count"
-                        stroke="#0ea5e9" // The solid line color
-                        strokeWidth={3}
-                        fillOpacity={1} 
-                        fill="url(#colorCount)" // Applies the gradient definition defined above
-                        activeDot={{ r: 6, stroke: 'white', strokeWidth: 3, fill: '#0ea5e9' }}
+                        type="monotone" dataKey="count" stroke="#0ea5e9" strokeWidth={4}
+                        fillOpacity={1} fill="url(#colorCount)"
+                        activeDot={{ r: 8, stroke: DarkMode ? '#0f172a' : 'white', strokeWidth: 3, fill: '#0ea5e9' }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </div>
-
             </div>
 
-            {/* OPERATIONAL INFO */}
-            <div className="bg-white border border-slate-200 p-6 rounded-[2rem] shadow-sm">
-              <h3 className="text-xs font-black uppercase tracking-widest mb-4">Operational Overview</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
-                <div><p className="text-gray-400">Pending Requests</p><p className="font-bold text-lg">{managementState?.pendingRequests}</p></div>
-                <div><p className="text-gray-400">Escalated Complaints</p><p className="font-bold text-lg">{managementState?.escalatedComplaints}</p></div>
-                <div><p className="text-gray-400">Top Category</p><p className="font-bold text-lg">{topCategory}</p></div>
-                <div><p className="text-gray-400">Top Sub City</p><p className="font-bold text-lg">{topSubCity}</p></div>
-              </div>
-            </div>
+            {/* OPERATIONAL OVERVIEW */}
+           
 
-            <DepartmentCircularChart />
+            <div className={sectionClass}>
+               <DepartmentCircularChart isDark={DarkMode} />
+            </div>
           </div>
         </main>
       </div>

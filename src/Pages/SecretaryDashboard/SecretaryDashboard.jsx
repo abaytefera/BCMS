@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { 
   CalendarCheck, CheckCircle, Loader2, 
-  Activity, TrendingUp, Inbox
+  Activity, TrendingUp, Inbox, Zap
 } from "lucide-react";
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
@@ -13,11 +13,12 @@ import StatCard from "../AuthenticationPage/ManagementDashboardPage/StatCard";
 import { useGetSecretaryDashboardQuery } from "../../Redux/secreatryApi";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../Redux/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const SecretaryDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { DarkMode } = useSelector((state) => state.webState || {});
 
   const { data: secData, isLoading: secLoading, error: secError } = useGetSecretaryDashboardQuery();
 
@@ -30,19 +31,17 @@ const SecretaryDashboard = () => {
 
   if (secLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC]">
-        <Loader2 className="animate-spin text-indigo-600 mb-4" size={48} />
-        <p className="text-slate-500 font-medium">Preparing Analytics...</p>
+      <div className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-500 ${DarkMode ? 'bg-slate-950' : 'bg-[#F8FAFC]'}`}>
+        <Loader2 className="animate-spin text-primBtn mb-4" size={48} />
+        <p className={`font-bold capitalize ${DarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Preparing analytics...</p>
       </div>
     );
   }
 
   const secStats = secData?.data || secData;
-  
   const scheduledCount = secStats?.byStatus?.find((s) => s.status === "SCHEDULED")?.count || 0;
   const approvedCount = secStats?.byStatus?.find((s) => s.status === "APPROVED")?.count || 0;
 
-  // Area chart looks best with a few points, so we map the status flow
   const chartData = [
     { name: 'Initial', count: 0 },
     { name: 'Scheduled', count: scheduledCount },
@@ -50,7 +49,7 @@ const SecretaryDashboard = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
+    <div className={`flex min-h-screen transition-colors duration-500 ${DarkMode ? 'bg-slate-950' : 'bg-[#F8FAFC]'}`}>
       <Sidebar role="secretary" />
 
       <div className="flex-1 flex flex-col">
@@ -59,48 +58,60 @@ const SecretaryDashboard = () => {
         <main className="pt-28 px-6 lg:px-10 pb-12">
           <div className="max-w-7xl mx-auto space-y-10">
             
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
-                <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {secStats?.executiveContext || "Executive"} Analytics
+                <h1 className={`text-4xl font-black tracking-tight capitalize ${DarkMode ? 'text-white' : 'text-slate-900'}`}>
+                  {(secStats?.executiveContext || "Secretary").toLowerCase()} analytics
                 </h1>
-                <p className="text-slate-500 mt-1 font-medium">Performance and meeting flow overview</p>
+                <p className={`mt-2 font-medium ${DarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                  Performance and meeting flow overview
+                </p>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border border-slate-200 shadow-sm text-slate-600 font-semibold text-sm">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Live Dashboard
+              <div className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl border-2 font-bold text-sm transition-all ${
+                DarkMode 
+                ? 'bg-slate-900 border-slate-800 text-slate-300' 
+                : 'bg-white border-slate-100 shadow-sm text-slate-600'
+              }`}>
+                <span className="w-2.5 h-2.5 rounded-full bg-primBtn animate-pulse" />
+               
               </div>
             </div>
 
             {/* Stat Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <StatCard 
-                title="Scheduled" 
+                title="scheduled" 
                 value={scheduledCount} 
                 icon={CalendarCheck} 
-                gradient="bg-indigo-600" 
+                gradient={DarkMode ? "bg-slate-900 border border-slate-800" : "bg-white"} 
                 onClick={() => navigate("/secretary/list/status/SCHEDULED")}
               />
               <StatCard 
-                title="Approved" 
+                title="approved" 
                 value={approvedCount} 
                 icon={CheckCircle} 
-                gradient="bg-emerald-500" 
+                gradient="bg-primBtn" 
                 onClick={() => navigate("/secretary/list/status/APPROVED")}
               />
             </div>
 
-            {/* BEAUTIFUL AREA GRAPH SECTION */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              
-              <div className="lg:col-span-2 bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
-                <div className="flex items-center justify-between mb-8 px-2">
+              {/* Chart Section */}
+              <div className={`lg:col-span-2 rounded-[2.5rem] p-8 border-2 transition-all ${
+                DarkMode 
+                ? 'bg-slate-900 border-slate-800' 
+                : 'bg-white border-slate-100 shadow-sm'
+              }`}>
+                <div className="flex items-center justify-between mb-10 px-2">
                   <div>
-                    <h3 className="text-xl font-bold text-slate-800">Workflow Analysis</h3>
-                    <p className="text-sm text-slate-400">Meeting progression trends</p>
+                    <h3 className={`text-xl font-black capitalize ${DarkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                      Workflow analysis
+                    </h3>
+                    <p className="text-sm text-slate-500 capitalize">Meeting progression trends</p>
                   </div>
-                  <div className="p-3 bg-indigo-50 rounded-2xl">
-                    <TrendingUp className="text-indigo-600" size={24} />
+                  <div className={`p-3 rounded-2xl ${DarkMode ? 'bg-slate-800' : 'bg-slate-50'}`}>
+                    <TrendingUp className="text-primBtn" size={24} />
                   </div>
                 </div>
 
@@ -109,32 +120,33 @@ const SecretaryDashboard = () => {
                     <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+                          <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
                           <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={DarkMode ? "#1e293b" : "#f1f5f9"} />
                       <XAxis 
                         dataKey="name" 
                         axisLine={false} 
                         tickLine={false} 
-                        tick={{fill: '#94a3b8', fontSize: 12, fontWeight: 500}} 
+                        tick={{fill: DarkMode ? '#475569' : '#94a3b8', fontSize: 12, fontWeight: 700}} 
                         dy={10}
                       />
                       <YAxis hide />
                       <Tooltip 
                         contentStyle={{
-                          borderRadius: '16px', 
-                          border: 'none', 
-                          boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
-                          padding: '12px'
+                          borderRadius: '24px', 
+                          backgroundColor: DarkMode ? '#0f172a' : '#ffffff',
+                          border: DarkMode ? '2px solid #1e293b' : 'none', 
+                          boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+                          padding: '16px'
                         }}
                       />
                       <Area 
                         type="monotone" 
                         dataKey="count" 
                         stroke="#6366f1" 
-                        strokeWidth={4}
+                        strokeWidth={6}
                         fillOpacity={1} 
                         fill="url(#colorCount)" 
                       />
@@ -144,23 +156,29 @@ const SecretaryDashboard = () => {
               </div>
 
               {/* Side Metric Insight */}
-              <div className="bg-primBtn rounded-[2.5rem] p-10 shadow-xl flex flex-col justify-between text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10">
-                   <Inbox size={120} />
+              <div className={`rounded-[2.5rem] p-10 shadow-2xl flex flex-col justify-between text-white relative overflow-hidden transition-all duration-500 ${
+                DarkMode ? 'bg-slate-900 border-2 border-primBtn/20' : 'bg-primBtn'
+              }`}>
+                <div className="absolute -top-10 -right-10 opacity-10 rotate-12">
+                   <Inbox size={200} />
                 </div>
                 
                 <div className="relative z-10">
-                  <Activity className="text-indigo-400 mb-6" size={32} />
-                  <h3 className="text-lg font-bold opacity-80 uppercase tracking-widest mb-1">Total Compilen</h3>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-7xl font-black">{Number(scheduledCount) + Number(approvedCount)}</span>
-                    <span className="text-white font-bold">Compilen</span>
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-8 ${DarkMode ? 'bg-primBtn' : 'bg-white/20 backdrop-blur-md'}`}>
+                    <Zap className="text-white" size={28} fill="white" />
+                  </div>
+                  <h3 className="text-sm font-bold opacity-70 capitalize tracking-tight mb-2">Total compiled items</h3>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-8xl font-black tabular-nums">
+                      {Number(scheduledCount) + Number(approvedCount)}
+                    </span>
+                    <span className="text-xl font-bold opacity-80 capitalize">Total</span>
                   </div>
                 </div>
 
-                <div className="relative z-10 pt-8 border-t border-slate-800">
-                   <p className="text-white text-sm leading-relaxed">
-                     Your workspace currently has <span className="text-white font-bold">{approvedCount}</span> verified meetings. Keep up the great work!
+                <div className={`relative z-10 pt-8 border-t ${DarkMode ? 'border-slate-800' : 'border-white/20'}`}>
+                   <p className="text-white/90 text-[15px] leading-relaxed font-medium">
+                     Your workspace currently has <span className="font-black underline decoration-white/40">{approvedCount}</span> verified meetings. Keep up the great work!
                    </p>
                 </div>
               </div>

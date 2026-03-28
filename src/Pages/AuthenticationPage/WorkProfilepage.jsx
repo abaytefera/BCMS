@@ -1,27 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Edit3, Save, X, User as UserIcon, Phone as PhoneIcon, 
-  Mail, Building, Loader2, Calendar, ShieldCheck, 
-  BadgeCheck, Camera, CheckCircle2 
+  Mail, Building, Loader2, Camera, UserCheck, Shield 
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
+import { useSelector, useDispatch } from 'react-redux';
 import { useGetProfileQuery, useUpdateProfileMutation } from '../../Redux/profileApi';
-
 import Sidebar from '../../Component/AuthenticateComponent/OfficerComponet/DashboardPage1Component/Sidebar';
 import AuthHeader from '../../Component/AuthenticateComponent/AuthHeader';
 import ProfileField from '../../Component/AuthenticateComponent/WorkProfileComponent/ProfileField';
-import AuthFooter from '../../Component/AuthenticateComponent/AuthFooter';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { logout } from '../../Redux/auth';
+
 const WorkProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
-  const Dispatch=useDispatch()
+  const dispatch = useDispatch();
+  const { DarkMode } = useSelector((state) => state.webState || {});
 
-  const { data: user, isLoading, error } = useGetProfileQuery(); // ✅ capture error
+  const { data: user, isLoading, error } = useGetProfileQuery(); 
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
 
   const [tempUser, setTempUser] = useState({ name: "", phone: "" });
@@ -35,15 +34,13 @@ const WorkProfile = () => {
     }
   }, [user]);
 
-  // ✅ 401 REDIRECT
   useEffect(() => {
     if (error?.status === 401) {
-        Dispatch(logout());
-        localStorage.removeItem('authToken');
+      dispatch(logout());
+      localStorage.removeItem('authToken');
       navigate('/login', { replace: true });
     }
-  }, [error, navigate]);
-  // -----------------
+  }, [error, navigate, dispatch]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -51,7 +48,9 @@ const WorkProfile = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfileImage(reader.result);
-        toast.success("Image uploaded to draft");
+        toast.success("Image preview updated", {
+          style: { borderRadius: '12px', background: DarkMode ? '#1e293b' : '#fff', color: DarkMode ? '#fff' : '#333' }
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -65,7 +64,7 @@ const WorkProfile = () => {
     }).unwrap();
 
     toast.promise(updatePromise, {
-      loading: 'Synchronizing profile with server...',
+      loading: 'Synchronizing profile...',
       success: () => {
         setIsEditing(false);
         return 'Profile updated successfully!';
@@ -74,11 +73,10 @@ const WorkProfile = () => {
     }, {
       style: {
         borderRadius: '15px',
-        background: '#333',
+        background: DarkMode ? '#0f172a' : '#1e293b',
         color: '#fff',
-        fontSize: '12px',
-        fontWeight: 'bold',
-        textTransform: 'uppercase'
+        fontSize: '13px',
+        fontWeight: '600',
       },
       success: {
         duration: 4000,
@@ -88,33 +86,40 @@ const WorkProfile = () => {
   };
 
   if (isLoading) return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <Loader2 className="animate-spin text-textColor" size={40} />
+    <div className={`min-h-screen flex items-center justify-center ${DarkMode ? 'bg-slate-950' : 'bg-white'}`}>
+      <Loader2 className="animate-spin text-primBtn" size={48} />
     </div>
   );
 
   return (
-    <div className="flex min-h-screen bg-white text-slate-800 font-sans">
+    <div className={`flex min-h-screen transition-colors duration-300 ${DarkMode ? 'bg-slate-950 text-slate-100' : 'bg-white text-slate-800'}`}>
       <Toaster position="top-right" reverseOrder={false} />
       <Sidebar role="manager" />
+      
       <div className="flex-1 flex flex-col min-w-0">
         <AuthHeader True={true} />
-        <main className="flex-1 flex flex-col items-center pt-32 pb-20 px-4 md:px-8 bg-slate-50/50">
-          <div className="w-full max-w-4xl">
-            <div className="bg-white border border-slate-200 rounded-[3rem] shadow-sm overflow-hidden relative">
+        
+        <main className={`flex-1 pt-32 pb-20 px-4 md:px-8 transition-colors duration-300 ${DarkMode ? 'bg-slate-950' : 'bg-slate-50/50'}`}>
+          <div className="max-w-4xl mx-auto">
+            
+            {/* SaaS Profile Card */}
+            <div className={`border rounded-[3rem] shadow-xl overflow-hidden relative transition-all duration-300 ${DarkMode ? 'bg-slate-900 border-slate-800 shadow-black/20' : 'bg-white border-slate-200 shadow-slate-200/50'}`}>
               
-              {/* Header Banner */}
-              <div className="h-44 bg-textColor relative">
+              {/* Header Banner - SaaS Aesthetic */}
+              <div className="h-48 bg-primBtn relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+                
+                {/* Profile Image Trigger */}
                 <div className="absolute -bottom-16 left-12 group cursor-pointer" onClick={() => fileInputRef.current.click()}>
-                  <div className="p-1.5 bg-white rounded-[2.2rem] shadow-xl border border-slate-100">
-                    <div className="w-32 h-32 bg-slate-50 rounded-[2rem] flex items-center justify-center overflow-hidden relative">
-                      {profileImage ? (
-                        <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                  <div className={`p-1.5 rounded-[2.5rem] shadow-2xl border transition-colors duration-300 ${DarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'}`}>
+                    <div className={`w-36 h-36 rounded-[2.2rem] flex items-center justify-center overflow-hidden relative ${DarkMode ? 'bg-slate-800' : 'bg-slate-50'}`}>
+                      {profileImage || user?.profile_image ? (
+                        <img src={profileImage || user?.profile_image} alt="Profile" className="w-full h-full object-cover" />
                       ) : (
-                        <UserIcon size={50} className="text-slate-300" />
+                        <UserIcon size={56} className={DarkMode ? 'text-slate-700' : 'text-slate-300'} />
                       )}
-                      <div className="absolute inset-0 bg-emerald-600/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                        <Camera className="text-white" size={24} />
+                      <div className="absolute inset-0 bg-primBtn/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px]">
+                        <Camera className="text-white" size={28} />
                       </div>
                     </div>
                   </div>
@@ -122,68 +127,78 @@ const WorkProfile = () => {
                 </div>
               </div>
 
-              <div className="pt-24 pb-12 px-8 md:px-12">
-                <div className="flex justify-between items-start mb-10">
-                  <div>
-                    <h1 className="text-3xl font-black text-slate-900  ">
-                      User <span className="text-textColor">Profile</span>
+              {/* Card Content */}
+              <div className="pt-24 pb-12 px-8 md:px-14">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-12">
+                  <div className="space-y-1">
+                    <h1 className="text-4xl font-black tracking-tight capitalize">
+                      <span className="text-primBtn">profile</span>
                     </h1>
+                    <div className={`flex items-center gap-2 text-sm font-semibold capitalize ${DarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                      <Shield size={14} className="text-primBtn" />
+                      {user?.role?.toLowerCase() }
+                    </div>
                   </div>
 
                   {!isEditing ? (
                     <button 
-                      onClick={() => {
-                        setIsEditing(true);
-                        toast('Editing Mode Active', { icon: '📝', style: { borderRadius: '10px', fontSize: '10px' } });
-                      }} 
-                      className="px-6 py-3 border border-slate-200 rounded-2xl text-[11px] font-black uppercase hover:bg-textColor hover:text-white transition-all"
+                      onClick={() => setIsEditing(true)} 
+                      className={`flex items-center gap-2 px-8 py-4 rounded-2xl text-xs font-black capitalize transition-all border
+                        ${DarkMode 
+                          ? 'border-slate-700 hover:border-primBtn hover:bg-primBtn/10 text-slate-300' 
+                          : 'border-slate-200 hover:border-primBtn/30 hover:bg-slate-50 text-slate-700 shadow-sm'}`}
                     >
-                      <Edit3 size={16} className="inline mr-2" /> Edit Profile
+                      <Edit3 size={16} /> Edit profile
                     </button>
                   ) : (
-                    <button onClick={() => setIsEditing(false)} className="p-3 bg-slate-50 text-slate-500 hover:bg-rose-50 hover:text-rose-600 rounded-2xl border border-slate-200">
+                    <button 
+                      onClick={() => setIsEditing(false)} 
+                      className={`p-4 rounded-2xl transition-all border
+                        ${DarkMode ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-rose-400' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-rose-50 hover:text-rose-600'}`}
+                    >
                       <X size={20} />
                     </button>
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Profile Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                   <ProfileField 
-                    label="Full Name" 
+                    label="Full name" 
                     value={tempUser.name} 
                     icon={UserIcon} 
                     isEditing={isEditing} 
                     onChange={(val) => setTempUser({...tempUser, name: val})} 
                   />
                   <ProfileField 
-                    label="Contact Number" 
+                    label="Contact number" 
                     value={tempUser.phone} 
                     icon={PhoneIcon} 
                     isEditing={isEditing} 
                     onChange={(val) => setTempUser({...tempUser, phone: val})} 
                   />
-                  <ProfileField label="Access Email" value={user?.username} icon={Mail} isEditing={false} />
-                  <ProfileField label="Departmental Unit" value={user?.Department?.name} icon={Building} isEditing={false} />
+                  <ProfileField label="Access email" value={user?.username} icon={Mail} isEditing={false} />
+                  <ProfileField label="Departmental unit" value={user?.Department?.name} icon={Building} isEditing={false} />
                 </div>
 
+                {/* Save Action */}
                 {isEditing && (
-                  <div className="mt-12">
+                  <div className="mt-14 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <button 
                       onClick={handleUpdate}
                       disabled={isUpdating}
-                      className="w-full bg-textColor disabled:bg-slate-300 text-white text-xs font-black uppercase py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg"
+                      className="w-full bg-primBtn disabled:bg-slate-300 text-white text-sm font-black capitalize py-5 rounded-[2rem] flex items-center justify-center gap-3 transition-all shadow-xl shadow-primBtn/20 active:scale-95"
                     >
-                      {isUpdating ? (
-                        <Loader2 className="animate-spin" size={18} />
-                      ) : (
-                        <Save size={18} />
-                      )}
-                      {isUpdating ? 'Saveing...' : 'Save '}
+                      {isUpdating ? <Loader2 className="animate-spin" size={20} /> : <UserCheck size={20} />}
+                      {isUpdating ? 'updating...' : 'update'}
                     </button>
                   </div>
                 )}
               </div>
             </div>
+            
+          
+            
           </div>
         </main>
       </div>

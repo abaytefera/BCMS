@@ -1,50 +1,99 @@
 import React from 'react';
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion"; 
 import { ArrowRight } from 'lucide-react';
 
-const SLAWarning = ({ title, count, icon: Icon,onClick, wave = 'up' }) => {
-  const { Language } = useSelector((state) => state.webState);
+/* 🎨 Professional SaaS Semantic Theme */
+const statusTheme = {
+  'total complaints': { container: "bg-blue-500/10 border-blue-500/20", icon: "text-blue-600 dark:text-blue-400" },
+  'not assigned': { container: "bg-indigo-500/10 border-indigo-500/20", icon: "text-indigo-600 dark:text-indigo-400" },
+  'resolved': { container: "bg-emerald-500/10 border-emerald-500/20", icon: "text-emerald-600 dark:text-emerald-400" },
+  'rejected': { container: "bg-rose-500/10 border-rose-500/20", icon: "text-rose-600 dark:text-rose-400" },
+  'active officers': { container: "bg-cyan-500/10 border-cyan-500/20", icon: "text-cyan-600 dark:text-cyan-400" },
+  'urgent complaint': { container: "bg-amber-500/10 border-amber-500/20", icon: "text-amber-600 dark:text-amber-400" },
+};
 
-  const gradientStyles = {
-    'total': 'bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500 text-white',
-    'not assigned': 'bg-gradient-to-br from-purple-400 via-purple-500 to-indigo-600 text-white',
-    'resolved': 'bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-500 text-white',
-    'rejected': 'bg-gradient-to-br from-rose-400 via-rose-500 to-pink-500 text-white',
-    'active officers': 'bg-gradient-to-br from-teal-400 via-teal-500 to-cyan-500 text-white',
-    'urgent complaint': 'bg-gradient-to-br from-red-500 via-red-600 to-orange-500 text-white shadow-lg shadow-red-200'
+const SLAWarning = ({ title, count, icon: Icon, onClick, wave = 'up', delay = 0 }) => {
+  const { DarkMode } = useSelector((state) => state.webState || {});
+  
+  const normalizedTitle = title?.toLowerCase() || "";
+  const theme = statusTheme[normalizedTitle] || statusTheme['total complaints'];
 
-  };
-
-  const defaultStyle = 'bg-white border border-gray-100 text-gray-900';
-  const cardStyle = gradientStyles[title.toLowerCase()] || defaultStyle;
-  const iconColor = gradientStyles[title.toLowerCase()] ? 'text-white' : 'text-gray-700';
-
-  const waveClass = wave === 'up' ? 'animate-wave-up' : 'animate-wave-down';
+  // ✅ FORCED WAVE ANIMATION 
+  // We use keyframes [start, peak, end] to ensure a complete loop
+  const yMovement = wave === 'up' ? [0, -10, 0] : [0, 10, 0];
 
   return (
-    <div onClick={onClick} className={`
-      relative overflow-hidden rounded-3xl p-6 shadow-lg cursor-pointer
-      ${cardStyle} ${waveClass}
-      hover:scale-[1.03] transition-transform duration-300
-    `}>
-      <div className="absolute inset-0 bg-white/20 backdrop-blur-sm" />
-
-      <div className="relative z-10 flex flex-col items-center gap-4">
-        <div className={`p-4 rounded-2xl ${iconColor} bg-white/20`}>
-          {Icon && <Icon size={24} strokeWidth={2.5} />}
-        </div>
-
-        <div className="text-center">
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/90">{title}</p>
-          <h4 className="text-3xl font-black text-white">{count ?? 0}</h4>
-        </div>
+    <motion.div
+      onClick={onClick}
+      // Explicitly setting initial to avoid conflicts
+      initial={{ y: 0 }}
+      animate={{ y: yMovement }}
+      transition={{
+        duration: 1.5,      // Faster for visible impact
+        repeat: Infinity,
+        repeatType: "loop", // Using loop with [0, -10, 0] for smoothest wave
+        ease: "easeInOut",
+        delay: delay        // This creates the staggered "wave" across multiple cards
+      }}
+      whileHover={{ 
+        scale: 1.03, 
+        y: 0, // Card stops moving when user tries to click it
+        transition: { duration: 0.2 } 
+      }}
+      className={`
+        relative p-8 rounded-[2.5rem]
+        flex flex-col items-center group
+        cursor-pointer transition-colors duration-500 border
+        ${DarkMode 
+          ? "bg-slate-900 border-slate-800 shadow-2xl shadow-black/50" 
+          : "bg-white border-slate-100 shadow-xl shadow-slate-200/40"}
+      `}
+    >
+      {/* 🎨 Icon Area */}
+      <div className={`
+        p-5 rounded-2xl mb-5 border transition-all duration-300
+        group-hover:scale-110 group-hover:rotate-3
+        ${theme.container}
+      `}>
+        {Icon && <Icon size={26} className={theme.icon} strokeWidth={2.5} />}
       </div>
 
-      <div className="absolute bottom-4 right-4 flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-        <ArrowRight size={16} className="text-white/80" />
+      {/* Label - Capitalize (No Uppercase) */}
+      <p className={`text-[11px] font-black capitalize tracking-[0.15em] mb-1 ${
+        DarkMode ? "text-slate-500" : "text-slate-400"
+      }`}>
+        {title}
+      </p>
+
+      {/* Numerical Data */}
+      <h3 className={`text-4xl font-black tracking-tighter transition-colors duration-300 ${
+        DarkMode ? "text-white" : "text-slate-900"
+      }`}>
+        {count ?? 0}
+      </h3>
+
+      {/* Navigation Arrow */}
+      <div className={`absolute bottom-6 right-1 p-2 rounded-xl transition-all duration-300 ${
+        DarkMode 
+          ? "bg-slate-800 text-slate-600 group-hover:text-white group-hover:bg-primBtn" 
+          : "bg-slate-50 text-slate-300 group-hover:text-white group-hover:bg-primBtn"
+      }`}>
+        <ArrowRight size={14} strokeWidth={3} />
       </div>
-    </div>
+
+      {/* Status Pulse Dot */}
+      <div className="absolute top-8 right-8">
+        <span className="relative flex h-2 w-2">
+          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+             normalizedTitle.includes('urgent') || normalizedTitle.includes('rejected') ? 'bg-rose-400' : 'bg-emerald-400'
+          }`}></span>
+          <span className={`relative inline-flex rounded-full h-2 w-2 ${
+             normalizedTitle.includes('urgent') || normalizedTitle.includes('rejected') ? 'bg-rose-500' : 'bg-emerald-500'
+          }`}></span>
+        </span>
+      </div>
+    </motion.div>
   );
 };
 

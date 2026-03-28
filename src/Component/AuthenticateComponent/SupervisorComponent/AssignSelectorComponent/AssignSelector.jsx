@@ -1,43 +1,67 @@
 import React from 'react';
+import { useSelector } from "react-redux";
 import { ChevronDown, User } from 'lucide-react';
 
-const AssignSelector = ({ label, value, options, onChange, icon: Icon }) => (
-  <div className="flex flex-col gap-3">
-    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">
-      {label}
-    </label>
-    <div className="relative group">
-      {/* Icon Section */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-textColor transition-colors">
-        {Icon ? <Icon size={18} /> : <User size={18} />}
-      </div>
+const AssignSelector = ({ label, value, options, onChange, icon: Icon, disabled }) => {
+  const { DarkMode } = useSelector((state) => state.webState || {});
 
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        /* Updated colors to match your white/slate theme and removed shadow */
-        className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-10 text-slate-800 font-bold appearance-none outline-none focus:border-textColor focus:ring-1 focus:ring-textColor transition-all cursor-pointer"
-      >
-        <option value="" className="text-slate-400">
-          Select an officer...
-        </option>
-        
-        {options.map((opt) => (
-          /* Fix: Use opt.value for the internal value 
-             and opt.label for the visible text 
-          */
-          <option key={opt.value} value={opt.value} className="text-slate-800">
-            {opt.label}
+  return (
+    <div className="flex flex-col gap-2.5 w-full group">
+      {/* Label with Capitalize formatting */}
+      {label && (
+        <label className={`text-[11px] font-bold capitalize tracking-tight ml-1 transition-colors ${
+          DarkMode ? 'text-slate-500' : 'text-slate-400'
+        }`}>
+          {label.toLowerCase()}
+        </label>
+      )}
+
+      <div className="relative">
+        {/* Dynamic Icon Section */}
+        <div className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors z-10 pointer-events-none ${
+          DarkMode ? 'text-slate-500' : 'text-slate-400'
+        }`}>
+          {Icon ? <Icon size={18} strokeWidth={2.5} /> : <User size={18} strokeWidth={2.5} />}
+        </div>
+
+        <select
+          value={value}
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.value)}
+          className={`
+            w-full appearance-none outline-none transition-all duration-300
+            py-4 pl-14 pr-12 rounded-2xl text-[13px] font-bold cursor-pointer
+            border-2 disabled:cursor-not-allowed disabled:opacity-50
+            ${DarkMode 
+              ? 'bg-slate-900 border-slate-800 text-slate-200 focus:border-primBtn focus:ring-4 focus:ring-primBtn/10' 
+              : 'bg-white border-slate-100 text-slate-800 focus:border-primBtn focus:ring-4 focus:ring-primBtn/5 shadow-sm'
+            }
+          `}
+        >
+          <option value="" className={DarkMode ? 'bg-slate-900' : 'bg-white'}>
+            Select professional...
           </option>
-        ))}
-      </select>
+          
+          {options.map((opt) => (
+            <option 
+              key={opt.value} 
+              value={opt.value} 
+              className={`capitalize ${DarkMode ? 'bg-slate-900 text-slate-200' : 'bg-white text-slate-800'}`}
+            >
+              {opt.label}
+            </option>
+          ))}
+        </select>
 
-      {/* Custom Chevron */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-        <ChevronDown size={18} />
+        {/* Professional Custom Chevron */}
+        <div className={`absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform group-hover:translate-y-[-40%] ${
+          DarkMode ? 'text-slate-600' : 'text-slate-300'
+        }`}>
+          <ChevronDown size={18} strokeWidth={3} />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default AssignSelector;

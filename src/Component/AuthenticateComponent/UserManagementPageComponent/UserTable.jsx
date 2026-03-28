@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Edit3, Trash2, Mail, Search, AlertTriangle, Building2 } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { Edit3, Trash2, Mail, Search, AlertTriangle, Building2, User } from 'lucide-react';
 
 const UserTable = ({ users = [], onEdit, onDelete, isAdmin }) => {
+  const { DarkMode } = useSelector((state) => state.webState || {});
   const [searchTerm, setSearchTerm] = useState("");
   const [userToDelete, setUserToDelete] = useState(null);
 
@@ -10,67 +12,90 @@ const UserTable = ({ users = [], onEdit, onDelete, isAdmin }) => {
     return name.includes(searchTerm.toLowerCase());
   });
 
+  // Base classes for consistent SaaS feel
+  const cardBg = DarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200";
+  const textColorMain = DarkMode ? "text-slate-100" : "text-slate-700";
+  const textColorMuted = DarkMode ? "text-slate-400" : "text-slate-500";
+
   return (
-    <div className="space-y-4 overflow-x-hidden">
-      {/* SEARCH BAR */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+    <div className="space-y-6">
+      {/* Search Bar - Professional Focus */}
+      <div className="relative max-w-sm group">
+        <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${DarkMode ? "text-slate-600 group-focus-within:text-primBtn" : "text-slate-400 group-focus-within:text-primBtn"}`} size={18} />
         <input
           type="text"
-          placeholder="Filter by name..."
-          className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+          placeholder="Filter staff by name..."
+          className={`w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none transition-all border
+            ${DarkMode 
+              ? "bg-slate-800/50 border-slate-700 text-slate-100 focus:border-primBtn focus:ring-4 focus:ring-primBtn/10" 
+              : "bg-white border-slate-200 text-slate-800 focus:border-primBtn focus:ring-4 focus:ring-primBtn/5"}`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      {/* TABLE WRAPPER */}
-      <div className="bg-white border border-slate-200 rounded-[2rem] shadow-sm overflow-hidden">
-        {/* Scroll container only for table */}
+      {/* Table Wrapper */}
+      <div className={`border rounded-[2rem] shadow-sm overflow-hidden transition-colors duration-300 ${cardBg}`}>
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="bg-slate-50/50 border-b border-slate-100 sticky top-0 z-10">
-              <tr className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">
-                <th className="px-8 py-5">Staff Member</th>
-                <th className="px-8 py-5">Department</th>
-                <th className="px-8 py-5">Contact</th>
-                {isAdmin && <th className="px-8 py-5 text-right">Actions</th>}
+            <thead>
+              <tr className={`border-b transition-colors ${DarkMode ? "bg-slate-800/50 border-slate-800" : "bg-slate-50/50 border-slate-100"}`}>
+                <th className={`px-8 py-5 text-[11px] font-black capitalize tracking-wider ${textColorMuted}`}>Staff member</th>
+                <th className={`px-8 py-5 text-[11px] font-black capitalize tracking-wider ${textColorMuted}`}>Department</th>
+                <th className={`px-8 py-5 text-[11px] font-black capitalize tracking-wider ${textColorMuted}`}>Contact details</th>
+                {isAdmin && <th className={`px-8 py-5 text-[11px] font-black capitalize tracking-wider text-right ${textColorMuted}`}>Actions</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className={`divide-y ${DarkMode ? "divide-slate-800" : "divide-slate-50"}`}>
               {filteredBySearch.map((user) => (
-                <tr key={user.id || user._id} className="group hover:bg-slate-50/50 transition-colors">
+                <tr key={user.id || user._id} className={`group transition-colors ${DarkMode ? "hover:bg-slate-800/40" : "hover:bg-slate-50/50"}`}>
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-emerald-100/50 text-textColor flex items-center justify-center font-bold">
-                        {(user.fullName || user.full_name || "U").charAt(0).toUpperCase()}
+                      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-lg shadow-sm
+                        ${DarkMode ? "bg-slate-800 text-textColor" : "bg-slate-100 text-textColor"}`}>
+                        {(user.fullName || user.full_name || "U").charAt(0)}
                       </div>
-                      <span className="font-bold text-slate-700">{user.fullName || user.full_name}</span>
+                      <div className="flex flex-col">
+                        <span className={`font-bold capitalize ${textColorMain}`}>{user.fullName || user.full_name}</span>
+                        <span className={`text-[10px] font-bold capitalize px-2 py-0.5 rounded-md w-fit mt-1
+                          ${DarkMode ? "bg-primBtn/10 text-primBtn" : "bg-primBtn/5 text-primBtn"}`}>
+                          {user.role?.toLowerCase() || 'staff'}
+                        </span>
+                      </div>
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+                    <div className={`flex items-center gap-2 text-xs font-bold capitalize ${textColorMuted}`}>
                       <Building2 size={14} className="text-textColor" />
-                      {user.department || user.Department?.name || "N/A"}
+                      {user.department || user.Department?.name || "Unassigned"}
                     </div>
                   </td>
-                  <td className="px-8 py-5 text-xs text-slate-400">
-                    <div className="flex items-center gap-2">
-                      <Mail size={14} /> {user.email || user.username}
+                  <td className="px-8 py-5">
+                    <div className={`flex flex-col gap-1 text-xs font-medium ${textColorMuted}`}>
+                      <div className="flex items-center gap-2">
+                        <Mail size={13} className="opacity-70" /> {user.email || user.username}
+                      </div>
+                      {user.phone_number && <div className="pl-5 opacity-70">{user.phone_number}</div>}
                     </div>
                   </td>
                   {isAdmin && (
                     <td className="px-8 py-5 text-right">
-                      <div className="flex justify-end gap-1">
+                      <div className="flex justify-end gap-2">
                         <button
                           onClick={() => onEdit(user)}
-                          className="p-2.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                          className={`p-2.5 rounded-xl transition-all border
+                            ${DarkMode 
+                              ? "text-slate-400 border-transparent hover:border-primBtn hover:text-primBtn hover:bg-primBtn/10" 
+                              : "text-slate-400 border-transparent hover:border-primBtn/30 hover:text-primBtn hover:bg-slate-50"}`}
                         >
                           <Edit3 size={18}/>
                         </button>
                         <button
                           onClick={() => setUserToDelete(user)}
-                          className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                          className={`p-2.5 rounded-xl transition-all border
+                            ${DarkMode 
+                              ? "text-slate-400 border-transparent hover:border-rose-500 hover:text-rose-500 hover:bg-rose-500/10" 
+                              : "text-slate-400 border-transparent hover:border-rose-200 hover:text-rose-600 hover:bg-rose-50"}`}
                         >
                           <Trash2 size={18}/>
                         </button>
@@ -84,33 +109,38 @@ const UserTable = ({ users = [], onEdit, onDelete, isAdmin }) => {
         </div>
 
         {filteredBySearch.length === 0 && (
-          <div className="py-20 text-center text-slate-400 italic">No staff members found.</div>
+          <div className={`py-24 text-center ${textColorMuted} italic text-sm capitalize`}>
+            No staff members match your search criteria.
+          </div>
         )}
       </div>
 
-      {/* DELETE CONFIRMATION MODAL */}
+      {/* Delete Confirmation Modal - SaaS Style */}
       {isAdmin && userToDelete && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="bg-white p-8 rounded-[2rem] max-w-sm w-full text-center shadow-2xl">
-            <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle size={32} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-300" />
+          <div className={`relative p-8 rounded-[2.5rem] max-w-sm w-full text-center shadow-2xl transform animate-in zoom-in-95 duration-300 border
+            ${DarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-100"}`}>
+            <div className="w-20 h-20 bg-rose-500/10 text-rose-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
+              <AlertTriangle size={40} />
             </div>
-            <h3 className="text-xl font-black mb-2">Are you sure?</h3>
-            <p className="text-slate-500 text-sm mb-6">
-              You are about to remove <span className="font-bold text-slate-900">{userToDelete.fullName}</span> from the system.
+            <h3 className={`text-2xl font-black mb-3 capitalize ${DarkMode ? "text-white" : "text-slate-900"}`}>Confirm removal</h3>
+            <p className={`text-sm mb-8 leading-relaxed ${textColorMuted}`}>
+              Are you sure you want to remove <span className={`font-bold ${DarkMode ? "text-slate-200" : "text-slate-900"}`}>{userToDelete.fullName || userToDelete.full_name}</span>? This action cannot be undone.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <button
                 onClick={() => setUserToDelete(null)}
-                className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-xs uppercase"
+                className={`flex-1 py-4 rounded-2xl font-bold text-xs capitalize transition-all
+                  ${DarkMode ? "bg-slate-800 text-slate-300 hover:bg-slate-700" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
               >
-                Cancel
+                Go back
               </button>
               <button
                 onClick={() => { onDelete(userToDelete.id || userToDelete._id); setUserToDelete(null); }}
-                className="flex-1 py-3 bg-rose-500 text-white rounded-xl font-bold text-xs uppercase"
+                className="flex-1 py-4 bg-rose-500 hover:bg-rose-600 text-white rounded-2xl font-bold text-xs capitalize transition-all active:scale-95 shadow-lg shadow-rose-500/25"
               >
-                Confirm
+                Remove staff
               </button>
             </div>
           </div>
