@@ -31,33 +31,36 @@ const MeetingComponent = ({
 
   if (!meeting) return null;
 
-  // Reusable styles for inputs
-  const inputClasses = `w-full p-3.5 rounded-2xl text-sm font-medium border-2 outline-none transition-all ${
+  // Professional SaaS Input Styles
+  const inputClasses = `w-full p-4 rounded-2xl text-[13px] font-medium border-2 outline-none transition-all duration-300 ${
     DarkMode 
-    ? 'bg-slate-900 border-slate-800 focus:border-indigo-500 text-slate-200' 
-    : 'bg-white border-slate-100 focus:border-textColor text-slate-800 shadow-sm'
+    ? 'bg-slate-900/50 border-slate-800 focus:border-primBtn/50 text-slate-200 placeholder:text-slate-600 focus:ring-4 focus:ring-primBtn/5' 
+    : 'bg-white border-slate-100 focus:border-primBtn text-slate-800 shadow-sm placeholder:text-slate-400 focus:ring-4 focus:ring-primBtn/5'
   }`;
 
   return (
-    <div className={`w-full space-y-6 font-sans ${DarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+    <div className={`w-full space-y-6 font-sans transition-colors duration-500 ${DarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
       
       {/* --- 1. PENDING STATE --- */}
       {meeting.status === "PENDING" && userRole === "SUPERVISOR" && (
-        <div className={`space-y-5 p-6 rounded-3xl border-2 animate-in fade-in duration-500 ${
+        <div className={`space-y-5 p-7 rounded-[2.5rem] border-2 animate-in fade-in slide-in-from-bottom-2 duration-500 ${
           DarkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-slate-50/50 border-slate-100'
         }`}>
-          <div className="flex items-center gap-3">
-            <div className={`p-2.5 rounded-xl ${DarkMode ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
-              <ShieldCheck size={20} />
+          <div className="flex items-center gap-4">
+            <div className={`p-3 rounded-2xl ${DarkMode ? 'bg-primBtn/10 text-primBtn' : 'bg-white text-primBtn shadow-sm'}`}>
+              <ShieldCheck size={22} strokeWidth={2.5} />
             </div>
-            <h3 className="font-bold text-base capitalize">Review meeting request</h3>
+            <div>
+              <h3 className="font-black text-lg capitalize tracking-tight leading-none">Review meeting request</h3>
+              <p className="text-[11px] font-bold text-slate-500 mt-1 capitalize">Supervisor action required</p>
+            </div>
           </div>
           
           <textarea
-            placeholder="Add a professional remark or reason..."
+            placeholder="add a professional remark or reason..."
             value={commitText}
             onChange={(e) => setCommitText(e.target.value)}
-            className={`${inputClasses} min-h-[100px] resize-none`}
+            className={`${inputClasses} min-h-[110px] resize-none`}
           />
 
           <select
@@ -65,51 +68,52 @@ const MeetingComponent = ({
             onChange={(e) => setSelectedExecutive(e.target.value)}
             className={inputClasses}
           >
-            <option value="">Select executive manager</option>
+            <option value="">select executive manager</option>
             {activeManager?.map((m) => (
               <option key={m.id} value={m.id}>{m.username.toLowerCase()}</option>
             ))}
           </select>
 
-          <div className="grid grid-cols-2 gap-4">
-            <button onClick={handleApproveMeeting} className="bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-emerald-600/20 capitalize">
-              Approve
+          <div className="grid grid-cols-2 gap-4 pt-2">
+            <button onClick={handleApproveMeeting} className="bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black transition-all active:scale-95 shadow-xl shadow-emerald-600/20 capitalize text-sm">
+              approve request
             </button>
-            <button onClick={handleRejectMeeting} className="bg-rose-500 hover:bg-rose-600 text-white py-3.5 rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-rose-500/20 capitalize">
-              Reject
+            <button onClick={handleRejectMeeting} className="bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-2xl font-black transition-all active:scale-95 shadow-xl shadow-rose-500/20 capitalize text-sm">
+              reject request
             </button>
           </div>
         </div>
       )}
 
-      {/* --- 2. APPROVED STATE (Scheduling) --- */}
+      {/* --- 2. APPROVED STATE --- */}
       {meeting.status === "APPROVED" && (userRole === "MANAGER" || userRole === "SECRETARY" || userRole === "SUPERVISOR") && (
-        <div className={`space-y-5 p-6 rounded-3xl border-2 ${
-          DarkMode ? 'bg-indigo-500/5 border-indigo-500/10' : 'bg-indigo-50/30 border-indigo-100'
+        <div className={`space-y-5 p-7 rounded-[2.5rem] border-2 ${
+          DarkMode ? 'bg-primBtn/5 border-primBtn/10' : 'bg-slate-50 border-slate-100'
         }`}>
-          <div className="flex items-center gap-3 text-indigo-600 dark:text-indigo-400 font-bold">
-            <Calendar size={20} /> <span className="capitalize">Schedule meeting details</span>
+          <div className="flex items-center gap-3 text-primBtn font-black">
+            <Calendar size={22} strokeWidth={2.5} /> <span className="capitalize text-lg tracking-tight">Schedule meeting details</span>
           </div>
           {(userRole === "MANAGER" || userRole === "SECRETARY") ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 ml-1 capitalize">Meeting date</label>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-500 ml-1 capitalize tracking-wider">meeting date</label>
                   <input type="date" value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} className={inputClasses} />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 ml-1 capitalize">Start time</label>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-500 ml-1 capitalize tracking-wider">start time</label>
                   <input type="time" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} className={inputClasses} />
                 </div>
               </div>
-              <input placeholder="Location (Room, link or office address)" value={location} onChange={(e) => setLocation(e.target.value)} className={inputClasses} />
-              <button onClick={handleScheduleMeeting} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-bold transition-all shadow-xl shadow-indigo-600/20 capitalize">
-                Confirm schedule
+              <input placeholder="location (room, link or office address)" value={location} onChange={(e) => setLocation(e.target.value)} className={inputClasses} />
+              <button onClick={handleScheduleMeeting} className="w-full bg-primBtn hover:brightness-110 text-white py-4.5 rounded-2xl font-black transition-all shadow-2xl shadow-primBtn/30 capitalize text-sm">
+                confirm schedule
               </button>
             </div>
           ) : (
-            <div className={`p-4 rounded-2xl border border-dashed text-center ${DarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
-              <p className="text-sm text-slate-500 italic capitalize">Waiting for manager to finalize the schedule.</p>
+            <div className={`p-8 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center text-center ${DarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
+               <Clock className="text-slate-400 mb-3" size={32} strokeWidth={1.5} />
+               <p className="text-sm text-slate-500 font-bold capitalize">waiting for manager to finalize the schedule</p>
             </div>
           )}
         </div>
@@ -117,97 +121,98 @@ const MeetingComponent = ({
 
       {/* --- 3. SCHEDULED STATE --- */}
       {meeting.status === "SCHEDULED" && (
-        <div className={`p-6 rounded-3xl border-2 shadow-sm space-y-6 ${
-          DarkMode ? 'bg-slate-950 border-slate-800' : 'bg-white border-slate-100'
+        <div className={`p-8 rounded-[3rem] border-2 transition-all duration-500 ${
+          DarkMode ? 'bg-slate-900 border-slate-800 shadow-2xl' : 'bg-white border-slate-50 shadow-xl shadow-slate-200/50'
         }`}>
-          <div className="flex justify-between items-center">
-             <span className="bg-indigo-500 text-white px-4 py-1.5 rounded-xl text-[10px] font-black tracking-widest uppercase">
-               Scheduled
-             </span>
+          <div className="flex justify-between items-center mb-8">
+             <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-primBtn/10 border border-primBtn/20">
+                <div className="w-1.5 h-1.5 rounded-full bg-primBtn animate-pulse" />
+                <span className="text-primBtn text-[11px] font-black capitalize tracking-tight">Scheduled</span>
+             </div>
              {(userRole === "MANAGER" || userRole === "SECRETARY") && !isRescheduling && (
                <button 
                 onClick={() => setIsRescheduling(true)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                  DarkMode ? 'hover:bg-slate-900 text-indigo-400' : 'hover:bg-indigo-50 text-indigo-600'
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[13px] font-black transition-all active:scale-95 ${
+                  DarkMode ? 'bg-slate-800 hover:bg-slate-700 text-primBtn' : 'bg-slate-50 hover:bg-slate-100 text-primBtn'
                 }`}
                >
-                 <Edit3 size={14} /> <span className="capitalize">Reschedule</span>
+                 <Edit3 size={16} strokeWidth={2.5} /> <span className="capitalize">reschedule</span>
                </button>
              )}
           </div>
           
           {isRescheduling ? (
-            <div className={`space-y-4 p-5 rounded-2xl border animate-in slide-in-from-top-2 duration-300 ${
+            <div className={`space-y-4 p-6 rounded-[2rem] border-2 animate-in zoom-in-95 duration-300 ${
               DarkMode ? 'bg-amber-500/5 border-amber-500/20' : 'bg-amber-50 border-amber-100'
             }`}>
-              <div className="flex justify-between items-center">
-                <h4 className="text-amber-600 font-bold text-sm capitalize">Update schedule</h4>
-                <button onClick={() => setIsRescheduling(false)} className="text-amber-600 p-1.5 rounded-full hover:bg-amber-100"><X size={18} /></button>
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="text-amber-600 font-black text-sm capitalize tracking-tight">Update schedule details</h4>
+                <button onClick={() => setIsRescheduling(false)} className="text-amber-600 p-2 rounded-full hover:bg-amber-100 transition-colors"><X size={20} strokeWidth={3}/></button>
               </div>
               <input type="date" value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} className={inputClasses} />
               <div className="grid grid-cols-2 gap-3">
                 <input type="time" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} className={inputClasses} />
                 <input type="time" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value)} className={inputClasses} />
               </div>
-              <input placeholder="Update location" value={location} onChange={(e) => setLocation(e.target.value)} className={inputClasses} />
+              <input placeholder="update location" value={location} onChange={(e) => setLocation(e.target.value)} className={inputClasses} />
               <button 
                 onClick={() => { handleScheduleMeeting(); setIsRescheduling(false); }} 
-                className="w-full bg-amber-600 text-white py-3 rounded-2xl font-bold hover:bg-amber-700 transition-all text-sm capitalize"
+                className="w-full bg-amber-600 text-white py-4 rounded-2xl font-black hover:bg-amber-700 transition-all text-sm capitalize shadow-lg shadow-amber-600/20"
               >
-                Save changes
+                save changes
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-2xl ${DarkMode ? 'bg-slate-900 text-slate-400' : 'bg-slate-50 text-slate-500'}`}><Calendar size={18}/></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="flex items-start gap-5">
+                <div className={`p-4 rounded-[1.25rem] ${DarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-50 text-slate-500'}`}><Calendar size={22} strokeWidth={2}/></div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Date</p>
-                  <span className="font-bold text-sm">{meeting.scheduledDate}</span>
+                  <p className="text-[11px] font-black text-slate-400 capitalize mb-1">Date</p>
+                  <span className="font-black text-[16px] tracking-tight">{meeting.scheduledDate}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-2xl ${DarkMode ? 'bg-slate-900 text-slate-400' : 'bg-slate-50 text-slate-500'}`}><Clock size={18}/></div>
+              <div className="flex items-start gap-5">
+                <div className={`p-4 rounded-[1.25rem] ${DarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-50 text-slate-500'}`}><Clock size={22} strokeWidth={2}/></div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Time</p>
-                  <span className="font-bold text-sm">{meeting.scheduledTime}</span>
+                  <p className="text-[11px] font-black text-slate-400 capitalize mb-1">Time</p>
+                  <span className="font-black text-[16px] tracking-tight">{meeting.scheduledTime}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-4 col-span-full border-t pt-4 dark:border-slate-800">
-                <div className={`p-3 rounded-2xl ${DarkMode ? 'bg-slate-900 text-slate-400' : 'bg-slate-50 text-slate-500'}`}><MapPin size={18}/></div>
+              <div className="flex items-start gap-5 col-span-full border-t-2 border-dashed pt-6 dark:border-slate-800">
+                <div className={`p-4 rounded-[1.25rem] ${DarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-50 text-slate-500'}`}><MapPin size={22} strokeWidth={2}/></div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Location</p>
-                  <span className="font-bold text-sm capitalize">{meeting.location?.toLowerCase() || "office main hall"}</span>
+                  <p className="text-[11px] font-black text-slate-400 capitalize mb-1">Location</p>
+                  <span className="font-black text-[16px] tracking-tight capitalize">{meeting.location?.toLowerCase() || "office main hall"}</span>
                 </div>
               </div>
             </div>
           )}
 
           {(userRole === "MANAGER" || userRole === "SECRETARY") && !isRescheduling && (
-            <div className={`mt-6 pt-6 border-t-2 border-dashed space-y-4 ${DarkMode ? 'border-slate-800' : 'border-slate-100'}`}>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-500 ml-1 capitalize">Meeting outcome</label>
+            <div className={`mt-10 pt-8 border-t-2 border-dashed space-y-6 ${DarkMode ? 'border-slate-800' : 'border-slate-100'}`}>
+              <div className="space-y-2">
+                <label className="text-[11px] font-black text-slate-500 ml-1 capitalize tracking-widest">meeting outcome</label>
                 <select value={outcome} onChange={(e) => setOutcome(e.target.value)} className={inputClasses}>
-                  <option value="">Select meeting outcome</option>
-                  <option value="RESOLVED">Resolved</option>
-                  <option value="FOLLOW_UP_REQUIRED">Follow-up required</option>
+                  <option value="">select meeting outcome</option>
+                  <option value="RESOLVED">resolved</option>
+                  <option value="FOLLOW_UP_REQUIRED">follow-up required</option>
                 </select>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-500 ml-1 capitalize">Final notes</label>
+              <div className="space-y-2">
+                <label className="text-[11px] font-black text-slate-500 ml-1 capitalize tracking-widest">final notes</label>
                 <textarea 
-                  placeholder="Summarize the meeting resolution..." 
+                  placeholder="summarize the meeting resolution..." 
                   value={outcomeNotes} 
                   onChange={(e) => setOutcomeNotes(e.target.value)} 
-                  className={`${inputClasses} min-h-[100px]`}
+                  className={`${inputClasses} min-h-[120px]`}
                 />
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-500 ml-1 capitalize">Meeting ending date</label>
+              <div className="space-y-2">
+                <label className="text-[11px] font-black text-slate-500 ml-1 capitalize tracking-widest">meeting ending date</label>
                 <input type="date" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value)} className={inputClasses} />
               </div>
-              <button onClick={handleCompleteMeeting} className="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold hover:bg-emerald-700 active:scale-95 transition-all shadow-xl shadow-emerald-600/20 capitalize">
-                Complete meeting session
+              <button onClick={handleCompleteMeeting} className="w-full bg-primBtn text-white py-4.5 rounded-2xl font-black  active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 capitalize text-[15px]">
+                complete meeting session
               </button>
             </div>
           )}
@@ -216,39 +221,39 @@ const MeetingComponent = ({
 
       {/* --- 4. TERMINAL STATES --- */}
       {meeting.status === "REJECTED" && (
-        <div className={`p-6 rounded-3xl border-2 flex items-start gap-4 ${
+        <div className={`p-8 rounded-[2.5rem] border-2 flex items-start gap-6 ${
           DarkMode ? 'bg-rose-500/5 border-rose-500/10' : 'bg-rose-50 border-rose-100'
         }`}>
-          <div className="p-2 bg-rose-500 text-white rounded-xl shadow-lg shadow-rose-500/20"><XCircle size={24} /></div>
+          <div className="p-3 bg-rose-500 text-white rounded-2xl shadow-xl shadow-rose-500/30"><XCircle size={28} strokeWidth={2.5} /></div>
           <div>
-            <h4 className="font-bold text-rose-600 capitalize text-lg">Request rejected</h4>
-            <p className="text-sm text-slate-500 mt-1 capitalize leading-relaxed">{meeting.rejectionReason?.toLowerCase() || "no reason provided."}</p>
+            <h4 className="font-black text-rose-600 capitalize text-xl tracking-tight">request rejected</h4>
+            <p className="text-sm font-medium text-slate-500 mt-2 capitalize leading-relaxed">{meeting.rejectionReason?.toLowerCase() || "no reason provided."}</p>
           </div>
         </div>
       )}
 
       {meeting.status === "COMPLETED" && (
-        <div className={`p-6 rounded-3xl border-2 shadow-sm ${
-          DarkMode ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-100'
+        <div className={`p-8 rounded-[3rem] border-2 shadow-sm ${
+          DarkMode ? 'bg-slate-950 border-slate-800' : 'bg-emerald-50/30 border-emerald-100'
         }`}>
-          <div className="flex items-center gap-4 mb-5">
-            <div className="p-2 bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-500/20"><CheckCircle size={24} /></div>
-            <h4 className="font-bold text-emerald-600 capitalize text-lg">Meeting completed</h4>
+          <div className="flex items-center gap-4 mb-8">
+            <div className="p-3 bg-emerald-500 text-white rounded-2xl shadow-xl shadow-emerald-500/30"><CheckCircle size={28} strokeWidth={2.5} /></div>
+            <h4 className="font-black text-emerald-600 capitalize text-xl tracking-tight">meeting completed</h4>
           </div>
-          <div className={`space-y-4 p-5 rounded-2xl border ${DarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-emerald-50'}`}>
-            <div className="flex justify-between items-center border-b pb-3 dark:border-slate-800">
-              <span className="text-[11px] font-bold text-slate-400 capitalize">Outcome</span>
-              <span className={`px-3 py-1 rounded-lg text-xs font-bold capitalize ${DarkMode ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-700'}`}>
+          <div className={`space-y-6 p-7 rounded-[2rem] border-2 ${DarkMode ? 'bg-slate-900 border-slate-800 shadow-inner' : 'bg-white border-emerald-50 shadow-sm'}`}>
+            <div className="flex justify-between items-center border-b pb-4 dark:border-slate-800">
+              <span className="text-[11px] font-black text-slate-400 capitalize tracking-widest">outcome</span>
+              <span className={`px-4 py-1.5 rounded-xl text-[13px] font-black capitalize ${DarkMode ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-700'}`}>
                 {meeting.outcome?.toLowerCase() || 'unknown'}
               </span>
             </div>
             {meeting.outcomeNotes && (
-              <div className="pt-1">
-                <p className="text-[11px] font-bold text-slate-400 capitalize mb-1">Resolution notes</p>
-                <p className="text-sm leading-relaxed capitalize">{meeting.outcomeNotes.toLowerCase()}</p>
-                <div className={`mt-3 pt-3 border-t flex justify-between items-center dark:border-slate-800`}>
-                  <span className="text-[10px] font-bold text-slate-400 capitalize">Closed on</span>
-                  <span className="text-[11px] font-bold">{meeting.endMeeting || 'N/A'}</span>
+              <div className="pt-2">
+                <p className="text-[11px] font-black text-slate-400 capitalize mb-2 tracking-widest">resolution notes</p>
+                <p className="text-[15px] font-medium leading-relaxed capitalize text-slate-500">{meeting.outcomeNotes.toLowerCase()}</p>
+                <div className="mt-8 pt-4 border-t-2 border-dashed flex justify-between items-center dark:border-slate-800">
+                  <span className="text-[10px] font-black text-slate-400 capitalize tracking-widest">closed on</span>
+                  <span className="text-xs font-black tracking-tight">{meeting.endMeeting || 'n/a'}</span>
                 </div>
               </div>
             )}
@@ -258,16 +263,16 @@ const MeetingComponent = ({
 
       {/* --- 5. ASSIGNED FOOTER --- */}
       {meeting.assignedExecutive && meeting.status !== "PENDING" && (
-        <div className={`flex items-center gap-3 px-4 py-3 w-fit rounded-2xl border transition-all ${
+        <div className={`flex items-center gap-4 px-6 py-4 w-fit rounded-[1.5rem] border-2 transition-all ${
           DarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-50 border-slate-100'
         }`}>
-          <div className={`p-1.5 rounded-lg ${DarkMode ? 'bg-slate-800 text-slate-400' : 'bg-white text-slate-500 shadow-sm'}`}>
-            <User size={14} />
+          <div className={`p-2 rounded-xl ${DarkMode ? 'bg-slate-800 text-slate-400' : 'bg-white text-slate-500 shadow-sm'}`}>
+            <User size={18} strokeWidth={2.5} />
           </div>
-          <span className="text-[11px] font-medium flex items-center gap-1.5">
-            <span className="capitalize">Assigned manager:</span>
-            <strong className={`capitalize ${DarkMode ? 'text-indigo-400' : 'text-slate-800'}`}>
-              {assignedManager?.username?.toLowerCase() || `ID: ${meeting.assignedExecutive}`}
+          <span className="text-xs font-bold flex items-center gap-2">
+            <span className="capitalize text-slate-500 font-medium">assigned manager:</span>
+            <strong className={`capitalize text-[13px] font-black ${DarkMode ? 'text-primBtn' : 'text-slate-800'}`}>
+              {assignedManager?.username?.toLowerCase() || `id: ${meeting.assignedExecutive}`}
             </strong>
           </span>
         </div>

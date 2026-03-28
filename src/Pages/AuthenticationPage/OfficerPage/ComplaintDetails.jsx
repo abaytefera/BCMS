@@ -95,6 +95,7 @@ const ComplaintDetails = () => {
     if (!selectedExecutive) return toast.error("Select manager");
     try {
       toast.loading("Approving meeting...", { id: "approve" });
+    
       await approveMeeting({
         compileid: complaint.id,
         manager_id: selectedExecutive,
@@ -129,7 +130,8 @@ const ComplaintDetails = () => {
 
   // Manager Meeting Actions
   const handleScheduleMeeting = async () => {
-    if (!scheduledDate || !scheduledTime || !durationMinutes || !location) {
+    
+    if (!scheduledDate || !scheduledTime  || !location) {
       return toast.error("Fill all fields");
     }
     try {
@@ -138,7 +140,7 @@ const ComplaintDetails = () => {
         meeting_id: complaint?.Meeting?.id,
         scheduledDate,
         scheduledTime,
-        endingdate: durationMinutes,
+        endingdate: scheduledDate,
         location
       }).unwrap();
       toast.success("Meeting scheduled", { id: "schedule" });
