@@ -3,6 +3,7 @@ import webState from "./WebState.jsx";
 import { 
   persistStore, 
   persistReducer, 
+  createTransform, // Added this to filter the state
   FLUSH, 
   REHYDRATE, 
   PAUSE, 
@@ -14,17 +15,27 @@ import storage from 'redux-persist/lib/storage';
 import { APi } from "./CenteralAPI.jsx";
 import authReducer from "./auth.jsx";
 
+// This transform ensures isloading is ALWAYS false when saving or loading
+const authTransform = createTransform(
+  // 1. When saving to localStorage (Inbound)
+  (inboundState) => ({ ...inboundState, isloading: false }),
+  // 2. When reading from localStorage (Outbound)
+  (outboundState) => ({ ...outboundState, isloading: false }),
+  // 3. Only apply this to the 'auth' slice
+  { whitelist: ['auth'] }
+);
+
 const rootReducer = combineReducers({
   'webState': webState,
   'auth': authReducer,
   [APi.reducerPath]: APi.reducer
 });
 
-// Added 'auth' to whitelist so the login token persists on refresh
 const persisConfig = { 
   key: 'root', 
   storage: storage.default ? storage.default : storage, 
-  whitelist: ['webState', 'auth'] 
+  whitelist: ['webState', 'auth'],
+  transforms: [authTransform] // Added the transform here
 };
 
 const presisReducer = persistReducer(persisConfig, rootReducer);
