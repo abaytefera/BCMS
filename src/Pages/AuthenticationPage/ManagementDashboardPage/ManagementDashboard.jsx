@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Activity, ShieldCheck, Heart, Loader2, Calendar,
-  AlertTriangle, CheckCircle, MapPin, Layers3, TrendingUp
+  AlertTriangle, CheckCircle, MapPin, Layers3, TrendingUp,
+  XCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -68,6 +69,10 @@ const ManagementDashboard = () => {
     { title: "total complaints", value: totalComplaints, icon: Activity, gradient: "bg-gradient-to-br from-blue-500 to-indigo-600", onClick: () => navigate("/Complaintlist/admin/list/") },
     { title: "scheduled today", value: managementState?.scheduledToday ?? 0, icon: Calendar, gradient: "bg-gradient-to-br from-violet-500 to-purple-600", onClick: () => navigate("/secretary/list/timeframe/today") },
     { title: "scheduled this week", value: managementState?.scheduledThisWeek ?? 0, icon: Calendar, gradient: "bg-gradient-to-br from-sky-500 to-blue-600", onClick: () => navigate("/secretary/list/timeframe/week") },
+   { title: "Monthly Completed", value: managementState?.completedThisMonth ?? 0, icon: Activity, gradient: "bg-gradient-to-br from-sky-500 to-blue-600", onClick: () => navigate("/secretary/list/stat/completed") },
+   { title: "Escalated Complaints", value: managementState?.escalatedComplaints, icon: XCircle, gradient: "bg-gradient-to-br from-pink-500 to-pink-600", onClick: () => navigate("/secretary/list/stat/escalated") },
+   
+
     { title: "sla compliance", value: slaCompliance, icon: ShieldCheck, gradient: "bg-gradient-to-br from-emerald-500 to-teal-600" },
   ];
 
@@ -217,11 +222,11 @@ const ManagementDashboard = () => {
             <div className={`p-8 rounded-[2.5rem] border-2 transition-all ${
               DarkMode ? "bg-slate-900/40 border-slate-800" : "bg-white border-slate-100 shadow-sm"
             }`}>
-              <h3 className="text-sm font-black capitalize tracking-tight mb-8">operational overview</h3>
+              
               <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
                 {[
                  
-                  { label: "escalated items", val: managementState?.escalatedComplaints, color: "text-rose-500" },
+                  
                   { label: "primary category", val: topCategory, color: "text-primBtn" },
                   { label: "active sub-city", val: topSubCity, color: "text-primBtn" }
                 ].map((item, idx) => (
